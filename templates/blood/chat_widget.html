@@ -1,14 +1,28 @@
 {% load static %}
 <style>
+    :root {
+        --chat-icon-size: 60px;
+        --chat-icon-bg-color: #cc0000;
+        --chat-icon-shadow: rgba(204, 0, 0, 0.2);
+        --chat-container-width: 360px;
+        --chat-header-bg-color: #cc0000;
+        --chat-header-color: white;
+        --chat-messages-bg-color: #f0f0f0;
+        --chat-input-border-color: #ddd;
+        --chat-send-button-bg-color: #cc0000;
+        --chat-send-button-hover-bg-color: #b30000;
+        --typing-indicator-color: #ccc;
+    }
+
     .chat-icon {
-        width: 60px;
-        height: 60px;
+        width: var(--chat-icon-size);
+        height: var(--chat-icon-size);
         position: fixed;
         bottom: 20px;
         right: 20px;
         border-radius: 50%;
-        background: #cc0000;
-        box-shadow: 0 0 10px rgba(204, 0, 0, 0.2);
+        background: var(--chat-icon-bg-color);
+        box-shadow: 0 0 10px var(--chat-icon-shadow);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -23,11 +37,11 @@
     }
 
     .chat-container {
-        width: 300px;
+        width: var(--chat-container-width);
         position: fixed;
         bottom: 20px;
         right: 20px;
-        border-radius: 8px;
+        border-radius: 10px;
         background: white;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
@@ -36,10 +50,10 @@
     }
 
     .chat-header {
-        background: #cc0000;
-        color: white;
-        padding: 10px;
-        border-radius: 8px 8px 0 0;
+        background: var(--chat-header-bg-color);
+        color: var(--chat-header-color);
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -48,95 +62,140 @@
 
     .chat-header h3 {
         margin: 0;
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .close-btn {
         background: none;
         border: none;
-        color: white;
+        color: var(--chat-header-color);
         cursor: pointer;
-        font-size: 20px;
+        font-size: 24px;
         padding: 0 5px;
     }
 
     .chat-messages {
-        height: 300px;
+        height: 400px;
         overflow-y: auto;
-        padding: 10px;
-        background: #f5f5f5;
+        padding: 15px;
+        background: var(--chat-messages-bg-color);
     }
 
     .message {
-        margin: 5px;
-        padding: 8px;
-        border-radius: 5px;
+        margin: 10px 0;
+        padding: 12px;
+        border-radius: 8px;
         max-width: 80%;
+        position: relative;
     }
 
     .user-message {
-        background: #e6f3ff;
-        margin-left: 20%;
-        border-left: 3px solid #cc0000;
+        background: #e1f5fe;
+        margin-left: auto;
+        color: #000;
     }
 
     .bot-message {
-        background: white;
-        margin-right: 20%;
-        border-right: 3px solid #cc0000;
+        background: #fff;
+        margin-right: auto;
+        color: #000;
+        border: 1px solid #ddd;
+    }
+
+    .typing-indicator {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    .typing-indicator div {
+        width: 8px;
+        height: 8px;
+        margin: 0 2px;
+        background-color: var(--typing-indicator-color);
+        border-radius: 50%;
+        animation: typing 1.5s infinite ease-in-out;
+    }
+
+    .typing-indicator div:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+
+    .typing-indicator div:nth-child(3) {
+        animation-delay: 0.6s;
+    }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+        30% {
+            transform: translateY(-10px);
+        }
     }
 
     .chat-input {
-        padding: 10px;
+        padding: 15px;
         border-top: 1px solid #eee;
         background: white;
+        display: flex;
+        align-items: center;
     }
 
     #message-input {
-        width: 80%;
-        padding: 8px;
-        border: 1px solid #cc0000;
-        border-radius: 4px;
+        width: 85%;
+        padding: 12px;
+        border: 1px solid var(--chat-input-border-color);
+        border-radius: 20px;
         outline: none;
+        margin-right: 10px;
     }
 
     #message-input:focus {
-        box-shadow: 0 0 3px rgba(204, 0, 0, 0.3);
+        box-shadow: 0 0 3px rgba(0, 120, 255, 0.3);
     }
 
     #send-button {
-        width: 15%;
-        padding: 8px;
-        background: #cc0000;
+        width: 10%;
+        padding: 12px;
+        background: var(--chat-send-button-bg-color);
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 50%;
         cursor: pointer;
         transition: background 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     #send-button:hover {
-        background: #b30000;
+        background: var(--chat-send-button-hover-bg-color);
     }
 </style>
 
 <!-- Chat Icon -->
-<div class="chat-icon" id="chat-icon">
-    <!-- <img src="{% static 'image/chat_bubble.png.webp' %}" alt="Chat"> -->
-    <svg class="me" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9l.3-.5z"/></svg>
+<div class="chat-icon" id="chat-icon" aria-label="Open Chat">
+    <svg class="me" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9l.3-.5z"/>
+    </svg>
 </div>
 
 <!-- Chat Container -->
-<div class="chat-container" id="chat-widget">
+<div class="chat-container" id="chat-widget" aria-label="Chat Widget">
     <div class="chat-header">
         <h3>Blood Bank Assistant</h3>
-        <button class="close-btn" id="close-btn">x</button>
+        <button class="close-btn" id="close-btn" aria-label="Close Chat">x</button>
     </div>
     <div class="chat-content">
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input">
-            <input type="text" id="message-input" placeholder="Type a message...">
-            <button id="send-button">Send</button>
+            <input type="text" id="message-input" placeholder="Type a message..." aria-label="Message Input">
+            <button id="send-button" aria-label="Send Message">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
@@ -149,18 +208,18 @@
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
         const chatMessages = document.getElementById('chat-messages');
+        let typingIndicator = null;
 
         // Show chat when clicking the chat icon
-        chatIcon.addEventListener('click', function() {
-            chatWidget.style.display = 'block';
-            chatIcon.style.display = 'none'; // Hide icon when chat is open
-        });
+        chatIcon.addEventListener('click', toggleChatWidget);
 
         // Close chat when clicking the "x" button
-        closeButton.addEventListener('click', function() {
-            chatWidget.style.display = 'none';
-            chatIcon.style.display = 'flex'; // Show icon when chat is closed
-        });
+        closeButton.addEventListener('click', toggleChatWidget);
+
+        function toggleChatWidget() {
+            chatWidget.style.display = chatWidget.style.display === 'block' ? 'none' : 'block';
+            chatIcon.style.display = chatWidget.style.display === 'block' ? 'none' : 'flex';
+        }
 
         function addMessage(message, isUser = false) {
             const messageDiv = document.createElement('div');
@@ -170,12 +229,30 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        function showTypingIndicator() {
+            if (typingIndicator) return;
+
+            typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = '<div></div><div></div><div></div>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            if (typingIndicator) {
+                chatMessages.removeChild(typingIndicator);
+                typingIndicator = null;
+            }
+        }
+
         async function sendMessage() {
             const message = messageInput.value.trim();
             if (!message) return;
 
             addMessage(message, true);
             messageInput.value = '';
+            showTypingIndicator();
 
             try {
                 const response = await fetch('/chat/', {
@@ -184,14 +261,19 @@
                     body: JSON.stringify({ message: message })
                 });
 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
                 const data = await response.json();
-                
+                hideTypingIndicator();
                 if (data.status === 'success') {
                     data.messages.forEach(msg => addMessage(msg));
                 } else {
                     addMessage('Sorry, I encountered an error.');
                 }
             } catch (error) {
+                hideTypingIndicator();
                 addMessage('Sorry, I encountered an error.');
                 console.error('Error:', error);
             }
