@@ -120,13 +120,13 @@
                                     <a class="nav-link" href="contact.php">Contact Us</a>
                                 </li>
                                 <li class="nav-item mx-lg-4 my-lg-0 my-3">
-                                    <a class="nav-link" href="donor-list.php">Donor List</a>
+                                    <a class="nav-link" href="/patient/patientlogin">Patient</a>
                                 </li>
                                 <li class="nav-item mx-lg-4 my-lg-0 my-3">
-                                    <a class="nav-link" href="search-donor.php">Search Donor</a>
+                                    <a class="nav-link" href="/donor/donorlogin">Donor</a>
                                 </li>
                                 <li class="nav-item mx-lg-4 my-lg-0 my-3">
-                                    <a class="nav-link" href="admin/index.php">Admin</a>
+                                    <a class="nav-link" href="/adminlogin">Admin</a>
                                 </li>
                             </ul>
                             <!-- login -->
@@ -221,3 +221,49 @@
             <!-- //modal -->
         </div>
         <!-- //header 2 -->
+
+
+        	<!-- Js files -->
+	<!-- JavaScript -->
+	<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+	<!-- Default-JavaScript-File -->
+
+	<!-- banner slider -->
+	<script src="{% static 'js/responsiveslides.min.js' %}"></script>
+	<script>
+		$(function () {
+			$("#slider4").responsiveSlides({
+				auto: true,
+				pager: true,
+				nav: true,
+				speed: 1000,
+				namespace: "callbacks",
+				before: function () {
+					$('.events').append("<li>before event fired.</li>");
+				},
+				after: function () {
+					$('.events').append("<li>after event fired.</li>");
+				}
+			});
+		});
+	</script>
+	<!-- //banner slider -->
+
+	<!-- fixed navigation -->
+	<script src="{% static 'js/fixed-nav.js' %}"></script>
+	<!-- //fixed navigation -->
+
+	<!-- smooth scrolling -->
+	<script src="{% static 'js/SmoothScroll.min.js' %}"></script>
+	<!-- move-top -->
+	<script src="{% static 'js/move-top.js' %}"></script>
+	<!-- easing -->
+	<script src="{% static 'js/easing.js' %}"></script>
+	<!--  necessary snippets for few javascript files -->
+	<script src="{% static 'js/medic.js' %}"></script>
+
+	<script src="{% static 'js/bootstrap.js' %}"></script>
+	<!-- Necessary-JavaScript-File-For-Bootstrap -->
+
+	<!-- //Js files -->
+    {% include 'blood/chat_widget.html' %}
