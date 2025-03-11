@@ -293,3 +293,4 @@ def reject_donation_view(request,pk):
     donation.status='Rejected'
     donation.save()
     return HttpResponseRedirect('/admin-donation')
+

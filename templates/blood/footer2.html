@@ -39,11 +39,11 @@
                     <div class="col-md-4 w3l-footer">
                         <h2 class="mb-sm-3 mb-2">
                             <a href="/" class="text-white font-italic font-weight-bold">
-                <span>Blood Bank & </span>Donor Management System 
+                <span>Blood Bank Donor System & </span> Chatbot 
                 <i class="fas fa-syringe ml-2"></i>
               </a>
                         </h2>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                        <p>Save a life today by donating blood.</p>
                     </div>
                     <div class="col-md-4 w3l-footer my-md-0 my-4">
                         <h3 class="mb-sm-3 mb-2 text-white">Address</h3>
@@ -74,10 +74,10 @@
                   <a href="/">Home</a>
                 </li>
                 <li class="mt-2">
-                  <a href="about.php">About Us</a>
+                  <a href="/">About Us</a>
                 </li>
                 <li class="mt-2">
-                  <a href="contact.php">Contact Us</a>
+                  <a href="/">Contact Us</a>
                 </li>
             
               </ul>
@@ -85,7 +85,7 @@
           </div>
         </div>
         <div class="border-top mt-5 pt-lg-4 pt-3 pb-lg-0 pb-3 text-center">
-          <p class="copy-right-grids mt-lg-1">©  Blood Bank Donor Management System
+          <p class="copy-right-grids mt-lg-1">©  Blood Bank Donor System & Chatbot
            
           </p>
         </div>
@@ -93,3 +93,48 @@
     </div>
   </footer>
   <!-- //footer -->
+
+  	<!-- Js files -->
+	<!-- JavaScript -->
+	<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+	<!-- Default-JavaScript-File -->
+
+	<!-- banner slider -->
+	<script src="{% static 'js/responsiveslides.min.js' %}"></script>
+	<script>
+		$(function () {
+			$("#slider4").responsiveSlides({
+				auto: true,
+				pager: true,
+				nav: true,
+				speed: 1000,
+				namespace: "callbacks",
+				before: function () {
+					$('.events').append("<li>before event fired.</li>");
+				},
+				after: function () {
+					$('.events').append("<li>after event fired.</li>");
+				}
+			});
+		});
+	</script>
+	<!-- //banner slider -->
+
+	<!-- fixed navigation -->
+	<script src="{% static 'js/fixed-nav.js' %}"></script>
+	<!-- //fixed navigation -->
+
+	<!-- smooth scrolling -->
+	<script src="{% static 'js/SmoothScroll.min.js' %}"></script>
+	<!-- move-top -->
+	<script src="{% static 'js/move-top.js' %}"></script>
+	<!-- easing -->
+	<script src="{% static 'js/easing.js' %}"></script>
+	<!--  necessary snippets for few javascript files -->
+	<script src="{% static 'js/medic.js' %}"></script>
+
+	<script src="{% static 'js/bootstrap.js' %}"></script>
+	<!-- Necessary-JavaScript-File-For-Bootstrap -->
+
+	<!-- //Js files -->
+    {% include 'blood/chat_widget.html' %}
