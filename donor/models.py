@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 
 class Donor(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_pic= models.ImageField(upload_to='profile_pic/Donor/',null=True,blank=True)
+    # profile_pic= models.ImageField(upload_to='profile_pic/Donor/',null=True,blank=True)
+    profile_pic= models.ImageField(upload_to='profile_pic/Donor/')
 
     
     bloodgroup=models.CharField(max_length=10)

@@ -1,0 +1,176 @@
+
+{% block content %}
+
+<head>
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.css">
+
+</head>
+<br><br>
+<div class="container mb-5">
+  <h3 class="title text-black text-center p-5">Blood Bank Overview</h3>
+
+  <div class="row mb-4">
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>A+ <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ A1.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>B+ <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ B1.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>O+ <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ O1.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>AB+ <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ AB1.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>A- <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ A2.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>B- <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ B2.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>O- <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ O2.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+            <div class="card-body">
+                <div class="blood">
+                    <h2>AB- <i class="fas fa-tint"></i></h2>
+                </div><br><br>
+                <div>
+                    {{ AB2.unit }}ml
+                </div>                            
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+          <div class="card-body">
+              <div class="blood">
+                  <i class="fas fa-users" style="color: #1e88e5;"></i>
+              </div><br>
+              <div>
+                  Available Donors <br>
+                  {{totaldonors}}
+              </div>                            
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+          <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+              <div class="card-body">
+                  <div class="blood">
+                      <i class="fas fa-spinner" style="color:#efb000;"></i>
+                  </div><br>
+                  <div>
+                      Total Requests <br>
+                     {{totalrequest}}
+                  </div>                            
+              </div>
+            </div>
+      </div>
+     
+        <div class="col-sm-3">
+          <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+              <div class="card-body">
+                  <div class="blood">
+                      <i class="fas fa-tint xyz" style="color:#d41010;"></i>
+                  </div><br>
+                  <div>
+                      Total Blood Unit (ml) <br>
+                      {{totalbloodunit}}
+                  </div>                            
+              </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card bg-light" style="transition: all 0.3s ease-in-out;">
+                <div class="card-body">
+                    <div class="blood">
+                        <i class="far fa-check-circle" style="color:green;"></i>
+                    </div><br>
+                    <div>
+                        Approved Requests <br>
+                        {{totalapprovedrequest}}
+                    </div>                            
+                </div>
+              </div>
+          </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+

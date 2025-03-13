@@ -294,3 +294,28 @@ def reject_donation_view(request,pk):
     donation.save()
     return HttpResponseRedirect('/admin-donation')
 
+
+def blood_bank_overview(request):
+    blood_data = models.Stock.objects.all()  # Or filter as required
+    context = {'blood_data': blood_data}
+    return render(request, 'blood/overview.html', context)
+
+# mod 1 
+def index_view(request):
+    totalunit = models.Stock.objects.aggregate(Sum('unit'))
+    dict = {
+        'A1': models.Stock.objects.get(bloodgroup="A+"),
+        'A2': models.Stock.objects.get(bloodgroup="A-"),
+        'B1': models.Stock.objects.get(bloodgroup="B+"),
+        'B2': models.Stock.objects.get(bloodgroup="B-"),
+        'AB1': models.Stock.objects.get(bloodgroup="AB+"),
+        'AB2': models.Stock.objects.get(bloodgroup="AB-"),
+        'O1': models.Stock.objects.get(bloodgroup="O+"),
+        'O2': models.Stock.objects.get(bloodgroup="O-"),
+        'totaldonors': dmodels.Donor.objects.all().count(),
+        'totalbloodunit': totalunit['unit__sum'],
+        'totalrequest': models.BloodRequest.objects.all().count(),
+        'totalapprovedrequest': models.BloodRequest.objects.all().filter(status='Approved').count()
+    }
+    return render(request, 'blood/index2.html', context=dict)
+

@@ -2347,3 +2347,12 @@ label.col-form-label {
 }
 
 /* //responsive */
+
+/* cards mod */
+.card.bg-light:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.fa-tint{     
+    color: #d41010   
+}

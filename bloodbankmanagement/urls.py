@@ -17,24 +17,30 @@ from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth.views import LogoutView,LoginView
 from blood import views
-
+from donor import views as donor_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # chatbot mod 1
     path('chat/', views.chat_endpoint, name='chat_endpoint'),
-    
-    
+    path('', donor_views.donor_view, name=''),
+
+
     path('donor/',include('donor.urls')),
     path('patient/',include('patient.urls')),
 
-   
-   
+     #added this
+    path('', views.index_view, name=''),
+
+
+
+
     path('',views.home_view,name=''),
      #mod 3
     path('', views.chat_page, name=''),  # or whatever URL you prefer
 
+    
     path('logout', LogoutView.as_view(template_name='blood/logout.html'),name='logout'),
 
     path('afterlogin', views.afterlogin_view,name='afterlogin'),
