@@ -16,29 +16,32 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth.views import LogoutView,LoginView
-from blood import views
 from donor import views as donor_views
+from blood import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    path('', views.index_view, name=''),#blood bank overvie
     # chatbot mod 1
     path('chat/', views.chat_endpoint, name='chat_endpoint'),
-    path('', donor_views.donor_view, name=''),
+    path('', views.chat_page, name=''),  # or whatever URL you prefer
 
 
     path('donor/',include('donor.urls')),
+    path('', donor_views.donor_view, name='donor_views'),
+
     path('patient/',include('patient.urls')),
 
      #added this
-    path('', views.index_view, name=''),
+   
 
 
 
 
-    path('',views.home_view,name=''),
+    # path('',views.home_view,name=''),we removed this sline because we think it is notr serving any purpose
      #mod 3
-    path('', views.chat_page, name=''),  # or whatever URL you prefer
+
 
     
     path('logout', LogoutView.as_view(template_name='blood/logout.html'),name='logout'),

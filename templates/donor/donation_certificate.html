@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Blood Donation Certificate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .certificate {
+            width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #8B0000;
+            text-align: center;
+        }
+        .header {
+            color: #8B0000;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin: 30px 0;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .footer {
+            margin-top: 50px;
+            font-size: 16px;
+        }
+        .signature {
+            margin-top: 80px;
+            border-top: 1px solid #000;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="header">
+            CHUKA BLOOD BANK<br>
+            CERTIFICATE OF BLOOD DONATION
+        </div>
+        
+        <div class="content">
+            This is to certify that<br>
+            <strong>{{ donor_name }}</strong><br>
+            has generously donated<br>
+            <strong>{{ units }} unit(s)</strong> of <strong>{{ blood_group }}</strong> blood<br>
+            on <strong>{{ date }}</strong>
+        </div>
+        
+        <div class="footer">
+            Your contribution helps save lives and is greatly appreciated.
+        </div>
+        
+        <div class="signature">
+            Director, Chuka Blood Bank
+        </div>
+    </div>
+</body>
+</html>
