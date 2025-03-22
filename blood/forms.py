@@ -9,6 +9,7 @@ class BloodForm(forms.ModelForm):
         fields=['bloodgroup','unit']
 
 class RequestForm(forms.ModelForm):
+    is_urgent = forms.BooleanField(required=False)
     class Meta:
         model=models.BloodRequest
         fields=['patient_name','patient_age','reason','bloodgroup','unit']

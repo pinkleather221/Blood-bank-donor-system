@@ -23,6 +23,7 @@
                 <th scope="col" style="color: rgb(192, 192, 192);">Date</th>
                 <th scope="col" style="color: rgb(192, 192, 192);">Status</th>
                 <th style="color: rgb(192, 192, 192);">Action</th>
+                <th style="color: rgb(192, 192, 192);">Urgency</th>
             </tr>
         </thead>
         <tbody>
@@ -30,8 +31,6 @@
             <tr>
                 <td> {{t.patient_name}}</td>
                 <td>{{t.patient_age}}</td>
-                
-                
                 <td>{{t.reason}}</td>
                 <td>{{t.bloodgroup}}</td>
                 <td>{{t.unit}}</td>
@@ -39,11 +38,19 @@
                 <td>{{t.status}}</td>
                 
                 
+                
                 <td>
                    
                     <button class="btn btn-success btn-sm"><a  style="text-decoration: none;color: white;" href="{% url 'update-approve-status' t.id  %}"><i class="fa fa-check"></i> Approve</a> </button>
                     <button class="btn btn-danger btn-sm"><a  style="text-decoration: none;color: white;" href="{% url 'update-reject-status' t.id  %}"><i class="fa fa-times"></i> Reject</a> </button>
                     
+                </td>
+                <td>
+                    {% if r.is_urgent %}
+                    <span class="badge badge-danger">URGENT</span>
+                    {% else %}
+                    <span class="badge badge-info">Normal</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

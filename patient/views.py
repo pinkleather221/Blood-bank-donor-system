@@ -41,6 +41,7 @@ def patient_dashboard_view(request):
         'requestapproved': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).filter(status='Approved').count(),
         'requestmade': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).count(),
         'requestrejected': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).filter(status='Rejected').count(),
+        'patient': patient,
 
     }
    
@@ -56,6 +57,30 @@ def make_request_view(request):
             patient= models.Patient.objects.get(user_id=request.user.id)
             blood_request.request_by_patient=patient
             blood_request.save()
+
+             # Check if blood is available
+            from blood.models import Stock
+            from blood.email_utils import send_patient_request_approved, send_patient_request_unavailable, send_urgent_request_to_donors
+            
+            stock = Stock.objects.get(bloodgroup=blood_request.bloodgroup)
+            
+            # Add a field to indicate urgency - you can add this to the form
+            is_urgent = request.POST.get('is_urgent', False)
+            
+            if stock.unit >= blood_request.unit:
+                # Blood is available - don't approve yet, wait for admin
+                # But notify the patient it's likely to be approved
+                send_patient_request_approved(patient, blood_request)
+            else:
+                # Blood unavailable
+                send_patient_request_unavailable(patient, blood_request)
+                
+                # If urgent, notify matching donors
+                if is_urgent:
+                    donors_notified = send_urgent_request_to_donors(blood_request.bloodgroup, patient)
+
+                
+            
             return HttpResponseRedirect('my-request')  
     return render(request,'patient/makerequest.html',{'request_form':request_form})
 

@@ -39,11 +39,15 @@ def donor_dashboard_view(request):
         'requestapproved': bmodels.BloodRequest.objects.all().filter(request_by_donor=donor).filter(status='Approved').count(),
         'requestmade': bmodels.BloodRequest.objects.all().filter(request_by_donor=donor).count(),
         'requestrejected': bmodels.BloodRequest.objects.all().filter(request_by_donor=donor).filter(status='Rejected').count(),
+        # manzee am smart af 
+        'donor': donor, 
     }
+    donor= models.Donor.objects.get(user_id=request.user.id)
     return render(request,'donor/donor_dashboard.html',context=dict)
 
 
 def donate_blood_view(request):
+    from blood.email_utils import send_donation_request_received
     donation_form=forms.DonationForm()
     if request.method=='POST':
         donation_form=forms.DonationForm(request.POST)
@@ -53,6 +57,10 @@ def donate_blood_view(request):
             donor= models.Donor.objects.get(user_id=request.user.id)
             blood_donate.donor=donor
             blood_donate.save()
+            
+            # Send email notification
+            send_donation_request_received(donor)
+
             return HttpResponseRedirect('donation-history')  
     return render(request,'donor/donate_blood.html',{'donation_form':donation_form})
 
@@ -82,3 +90,23 @@ def request_history_view(request):
 def donor_view(request):
     donors = models.Donor.objects.all()
     return render(request, 'blood/index2.html', {'donors': donors})
+
+@login_required(login_url='donorlogin')
+def update_notification_settings(request):
+    if request.method == 'POST':
+        # Get the donor instance
+        donor = models.Donor.objects.get(user_id=request.user.id)
+        
+        # Update email
+        email = request.POST.get('email')
+        if email:
+            # Update both user email and donor email
+            request.user.email = email
+            request.user.save()
+            donor.email = email
+            donor.save()
+            
+        # You could also store preference settings in a new model if needed
+        
+        return redirect('donor-dashboard')
+    return redirect('donor-dashboard')

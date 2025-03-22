@@ -10,6 +10,49 @@
 </head>
 <br><br>
 <div class="container">
+  <div class="row">
+      <div class="col-md-8 offset-md-2">
+          <div class="card">
+              <div class="card-header bg-info">
+                  <h4 class="text-white text-center">Your Dashboard</h4>
+              </div>
+              <div class="card-body">
+                  <p><strong>Name:</strong> {{patient.get_name}}</p>
+                  <p><strong>Blood Group:</strong> {{patient.bloodgroup}}</p>
+                  <p><strong>Disease:</strong> {{patient.disease}}</p>
+                  <p><strong>Doctor:</strong> {{patient.doctorname}}</p>
+                  <p><strong>Mobile:</strong> {{patient.mobile}}</p>
+                  <p><strong>Email:</strong> 
+                      {% if patient.email %}
+                      {{patient.email}}
+                      {% elif patient.user.email %}
+                      {{patient.user.email}}
+                      {% else %}
+                      Not provided
+                      {% endif %}
+                  </p>
+                  <p><strong>Address:</strong> {{patient.address}}</p>
+                  
+                  <div class="alert alert-info">
+                      <p><strong>Email Notifications:</strong> 
+                          {% if patient.email or patient.user.email %}
+                          You will receive email notifications about your blood requests.
+                          {% else %}
+                          Please add an email address to receive notifications about your blood requests.
+                          {% endif %}
+                      </p>
+                  </div>
+                  
+                  <div class="text-center">
+                      <a href="{% url 'make-request' %}" class="btn btn-primary">Request Blood</a>
+                      <a href="{% url 'my-request' %}" class="btn btn-info">My Requests</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="container">
 
  
     <div class="row">

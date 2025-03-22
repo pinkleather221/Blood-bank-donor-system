@@ -20,8 +20,8 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'static')
 # settings.py
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = ''
+MEDIA_ROOT = os.path.join(BASE_DIR, '')
 
 
 # Quick-start development settings - unsuitable for production
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'blood',
     'donor',
     'patient',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -135,17 +136,20 @@ STATIC_DIR,
  ]
 LOGIN_REDIRECT_URL='/afterlogin'
 
-#for contact us give your gmail id and password
-EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Replace with your SMTP server
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'from@gmail.com' # this email will be used to send emails
-EMAIL_HOST_PASSWORD = 'xyz' # host email password required
-# now sign in with your host gmail account in your browser
-# open following link and turn it ON
-# https://myaccount.google.com/lesssecureapps
-# otherwise you will get SMTPAuthenticationError at /contactus
-# this process is required because google blocks apps authentication by default
-EMAIL_RECEIVING_USER = ['to@gmail.com'] # email on which you will receive messages sent from website
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nellymogere2002@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'Run2Th3H!lls@001'  # Use app password for Gmail
+DEFAULT_FROM_EMAIL = 'Chuka Blood Bank <nellymogere2002@gmail.com>'
+
+# Celery configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 

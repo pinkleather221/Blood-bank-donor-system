@@ -30,6 +30,7 @@
                 <th scope="col" style="color: rgb(192, 192, 192);">Request Date</th>
                 <th scope="col" style="color: rgb(192, 192, 192);">Status</th>
                 <th style="color: rgb(192, 192, 192);">Action</th>
+                <th scope="col" style="color: rgb(192, 192, 192);">Health Check</th>
             </tr>
         </thead>
         <tbody>
@@ -53,6 +54,15 @@
                 {% else %}
                 <td><span class="label danger">0 Unit Added To Stock</span></td> 
                 {% endif %}
+                <td>
+                    {% if d.health_check_passed %}
+                    <span class="badge badge-success">Passed</span>
+                    {% elif d.status == 'Rejected' %}
+                    <span class="badge badge-danger">Failed</span>
+                    {% else %}
+                    <span class="badge badge-warning">Pending</span>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
 

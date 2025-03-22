@@ -78,6 +78,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-row">
+                        <div class="name">Mark as Urgent (This will notify matching donors immediately)</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field request_form.is_urgent|attr:'required:true'  class="input--style-5"  %}
+                               
+                            </div>
+                        </div>
+                    </div>
+                    
             
 
 

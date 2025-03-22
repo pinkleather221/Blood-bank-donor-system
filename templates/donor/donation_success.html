@@ -1,0 +1,27 @@
+{% extends 'donor/donorbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="text-center">Donation Successful!</h4>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static 'images/success.png' %}" alt="Success" class="img-fluid mb-4" style="max-width: 150px;">
+                    <h3>Thank You for Your Donation!</h3>
+                    <p class="lead">Your generosity helps save lives. A confirmation email has been sent to your registered email address.</p>
+                    <p>If you provided an email, a donation certificate will be sent to you.</p>
+                    <div class="mt-4">
+                        <a href="{% url 'donor-dashboard' %}" class="btn btn-primary">Return to Dashboard</a>
+                        <a href="{% url 'donation-history' %}" class="btn btn-info">View Donation History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

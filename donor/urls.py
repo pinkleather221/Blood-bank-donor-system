@@ -10,4 +10,5 @@ urlpatterns = [
     path('donation-history', views.donation_history_view,name='donation-history'),
     path('make-request', views.make_request_view,name='make-request'),
     path('request-history', views.request_history_view,name='request-history'),
+    path('update-notification-settings', views.update_notification_settings, name='update-notification-settings'),
 ]

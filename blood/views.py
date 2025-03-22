@@ -248,6 +248,7 @@ def admin_donation_view(request):
 
 @login_required(login_url='adminlogin')
 def update_approve_status_view(request,pk):
+    from blood.email_utils import send_patient_request_approved
     req=models.BloodRequest.objects.get(id=pk)
     message=None
     bloodgroup=req.bloodgroup
@@ -257,23 +258,41 @@ def update_approve_status_view(request,pk):
         stock.unit=stock.unit-unit
         stock.save()
         req.status="Approved"
+        req.save()
+
+         # Send approval email
+        if req.request_by_patient:
+            send_patient_request_approved(req.request_by_patient, req)
         
     else:
         message="Stock Doest Not Have Enough Blood To Approve This Request, Only "+str(stock.unit)+" Unit Available"
     req.save()
+
+     # Could also send unavailable email here
+    if req.request_by_patient:
+        from blood.email_utils import send_patient_request_unavailable
+        send_patient_request_unavailable(req.request_by_patient, req)
 
     requests=models.BloodRequest.objects.all().filter(status='Pending')
     return render(request,'blood/admin_request.html',{'requests':requests,'message':message})
 
 @login_required(login_url='adminlogin')
 def update_reject_status_view(request,pk):
+    from blood.email_utils import send_patient_request_unavailable
+    
     req=models.BloodRequest.objects.get(id=pk)
     req.status="Rejected"
     req.save()
+    
+     # Send rejection email
+    if req.request_by_patient:
+        send_patient_request_unavailable(req.request_by_patient, req)
+
     return HttpResponseRedirect('/admin-request')
 
 @login_required(login_url='adminlogin')
 def approve_donation_view(request,pk):
+    from blood.email_utils import send_donation_successful
     donation=dmodels.BloodDonate.objects.get(id=pk)
     donation_blood_group=donation.bloodgroup
     donation_blood_unit=donation.unit
@@ -283,15 +302,26 @@ def approve_donation_view(request,pk):
     stock.save()
 
     donation.status='Approved'
+    donation.health_check_passed = True
     donation.save()
+
+    # Send success email
+    donor = donation.donor
+    send_donation_successful(donor, donation)
     return HttpResponseRedirect('/admin-donation')
 
 
 @login_required(login_url='adminlogin')
 def reject_donation_view(request,pk):
+    from blood.email_utils import send_donation_failed
     donation=dmodels.BloodDonate.objects.get(id=pk)
     donation.status='Rejected'
+    donation.health_check_passed = False
     donation.save()
+
+    # Send rejection email
+    donor = donation.donor
+    send_donation_failed(donor)
     return HttpResponseRedirect('/admin-donation')
 
 

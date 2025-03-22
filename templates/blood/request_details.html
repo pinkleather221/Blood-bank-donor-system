@@ -1,0 +1,84 @@
+<!-- blood/templates/blood/request_details.html -->
+{% extends 'blood/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Blood Request Details</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Request Information</h5>
+                    <p><strong>Patient Name:</strong> {{request.patient_name}}</p>
+                    <p><strong>Patient Age:</strong> {{request.patient_age}}</p>
+                    <p><strong>Blood Group:</strong> {{request.bloodgroup}}</p>
+                    <p><strong>Units Required:</strong> {{request.unit}}</p>
+                    <p><strong>Reason:</strong> {{request.reason}}</p>
+                    <p><strong>Date Requested:</strong> {{request.date}}</p>
+                    <p><strong>Status:</strong> 
+                        {% if request.status == 'Approved' %}
+                        <span class="badge badge-success">Approved</span>
+                        {% elif request.status == 'Rejected' %}
+                        <span class="badge badge-danger">Rejected</span>
+                        {% else %}
+                        <span class="badge badge-warning">Pending</span>
+                        {% endif %}
+                    </p>
+                    
+                    {% if request.is_urgent %}
+                    <div class="alert alert-danger">
+                        <strong>URGENT REQUEST</strong> - This is an urgent blood request!
+                    </div>
+                    {% endif %}
+                    
+                    {% if request.request_by_patient %}
+                    <h5 class="mt-4 mb-3">Patient Contact Information</h5>
+                    <p><strong>Name:</strong> {{request.request_by_patient.get_name}}</p>
+                    <p><strong>Mobile:</strong> {{request.request_by_patient.mobile}}</p>
+                    <p><strong>Email:</strong> 
+                        {% if request.request_by_patient.email %}
+                        {{request.request_by_patient.email}}
+                        {% elif request.request_by_patient.user.email %}
+                        {{request.request_by_patient.user.email}}
+                        {% else %}
+                        Not provided
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    
+                    {% if stock %}
+                    <h5 class="mt-4 mb-3">Stock Information</h5>
+                    <p><strong>Available Units:</strong> {{stock.unit}}</p>
+                    <p><strong>Sufficient Stock:</strong> 
+                        {% if stock.unit >= request.unit %}
+                        <span class="badge badge-success">Yes</span>
+                        {% else %}
+                        <span class="badge badge-danger">No (Shortage of {{request.unit|subtract:stock.unit}} units)</span>
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="text-center mt-4">
+                        {% if request.status == 'Pending' %}
+                        <a href="{% url 'approve-request' request.id %}" class="btn btn-success">Approve Request</a>
+                        <a href="{% url 'reject-request' request.id %}" class="btn btn-danger">Reject Request</a>
+                        {% endif %}
+                        
+                        {% if request.status == 'Pending' and request.is_urgent and stock.unit < request.unit %}
+                        <a href="{% url 'notify-donors' request.bloodgroup %}" class="btn btn-warning">
+                            Notify Matching Donors
+                        </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'admin-request' %}" class="btn btn-secondary">Back to Requests</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

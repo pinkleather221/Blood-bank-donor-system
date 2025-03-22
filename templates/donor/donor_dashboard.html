@@ -1,70 +1,121 @@
 {% extends 'donor/donorbase.html' %}
 {% block content %}
+{% load static %}
+{% load custom_filters %}
+
 <br><br>
 <div class="container">
 
-
     <div class="row">
-
-      <div class="col-sm-3">
-        <div class="card bg-light">
-          <div class="card-body">
-              <div class="blood">
-                <i class="fa fa-user-plus xyz" style="color: #1e88e5;"></i>
-              </div><br>
-              <div>
-                Request Made <br>
-                  {{requestmade}}
-              </div>                            
-          </div>
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-info">
+                    <h4 class="text-white text-center">Your Dashboard</h4>
+                    
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{donor.get_name}}</p>
+                    <p><strong>Blood Group:</strong> {{donor.bloodgroup}}</p>
+                    <p><strong>Mobile:</strong> {{donor.mobile}}</p>
+                    <p><strong>Email:</strong> 
+                        {% if donor.email %}
+                        {{donor.email}}
+                        {% elif donor.user.email %}
+                        {{donor.user.email}}
+                        {% else %}
+                        Not provided
+                        {% endif %}
+                    </p>
+                    <p><strong>Address:</strong> {{donor.address}}</p>
+                    
+                    {% if donor.last_donation_date %}
+                    <p><strong>Last Donation:</strong> {{donor.last_donation_date|date:"F d, Y"}}</p>
+                    {% else %}
+                    <p><strong>Last Donation:</strong> No previous donations recorded</p>
+                    {% endif %}
+                    
+                    {% if donor.last_donation_date %}
+                    {% with next_donation_date=donor.last_donation_date|date_add:90 %}
+                            {% if today > next_donation_date %}
+                            <div class="alert alert-success">
+                                <strong>You are eligible to donate again!</strong>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info">
+                                <strong>You'll be eligible to donate again on:</strong> {{next_donation_date|date:"F d, Y"}}
+                            </div>
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
+                    <div class="alert alert-success">
+                        <strong>You are eligible to donate!</strong>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <div class="col-sm-3">
-        <div class="card bg-light">
-            <div class="card-body">
-                <div class="blood">
-                  <i class="fas fa-sync xyz" style="color:#efb000;"></i>
-                </div><br>
-                <div>
-                    Pending Request <br>
-                    {{requestpending}}
-                </div>                            
-            </div>
-          </div>
-      </div>
+    <div class="row mt-4">
 
-      <div class="col-sm-3">
-          <div class="card bg-light">
-              <div class="card-body">
-                  <div class="blood">
-                    <i class="fas fa-check-circle xyz" style="color: green;"></i>
-                  </div><br>
-                  <div>
-                       Approved Request<br>
-                      {{requestapproved}}
-                  </div>                            
-              </div>
+        <div class="col-sm-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="blood">
+                        <i class="fa fa-user-plus xyz" style="color: #1e88e5;"></i>
+                    </div><br>
+                    <div>
+                        Request Made <br>
+                        {{requestmade}}
+                    </div>                             
+                </div>
             </div>
-      </div>
-      <div class="col-sm-3">
-          <div class="card bg-light">
-              <div class="card-body">
-                  <div class="blood">
-                    <i class="fas fa-times-circle xyz" style="color: red;"></i>
-                  </div><br>
-                  <div>
-                       Rejected Request <br>
-                      {{requestrejected}}
-                  </div>                            
-              </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="blood">
+                        <i class="fas fa-sync xyz" style="color:#efb000;"></i>
+                    </div><br>
+                    <div>
+                        Pending Request <br>
+                        {{requestpending}}
+                    </div>                             
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="blood">
+                        <i class="fas fa-check-circle xyz" style="color: green;"></i>
+                    </div><br>
+                    <div>
+                        Approved Request<br>
+                        {{requestapproved}}
+                    </div>                             
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="blood">
+                        <i class="fas fa-times-circle xyz" style="color: red;"></i>
+                    </div><br>
+                    <div>
+                        Rejected Request <br>
+                        {{requestrejected}}
+                    </div>                             
+                </div>
             </div>
         </div>
 
     </div>
 
-
 </div>
-
 
 {% endblock content %}

@@ -1,0 +1,48 @@
+<!-- blood/templates/blood/email_preview.html -->
+{% extends 'blood/adminbase.html' %}
+{% block content %}
+{%load static%}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="text-center">Email Notification Preview</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Email Details</h5>
+                    <p><strong>To:</strong> {{recipient}}</p>
+                    <p><strong>Subject:</strong> {{subject}}</p>
+                    
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Email Content
+                        </div>
+                        <div class="card-body">
+                            <pre>{{message}}</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <form method="post" action="{% url 'send_email' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="recipient" value="{{recipient}}">
+                            <input type="hidden" name="subject" value="{{subject}}">
+                            <input type="hidden" name="message" value="{{message}}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i> Send Email
+                            </button>
+                            <a href="{% url 'compose_email' %}" class="btn btn-secondary">
+                                <i class="fas fa-edit"></i> Edit Email
+                            </a>
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

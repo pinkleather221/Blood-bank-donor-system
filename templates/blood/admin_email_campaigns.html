@@ -1,0 +1,405 @@
+<!-- blood/templates/blood/admin_email_campaigns.html -->
+{% extends 'blood/adminbase.html' %} {% block content %} {% load static %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="text-center">Email Campaign Management</h4>
+        </div>
+        <div class="card-body">
+          <ul class="nav nav-tabs" id="emailTabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="compose-tab"
+                data-toggle="tab"
+                href="#compose"
+                role="tab"
+              >
+                <i class="fas fa-edit"></i> Compose Email
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="templates-tab"
+                data-toggle="tab"
+                href="#templates"
+                role="tab"
+              >
+                <i class="fas fa-file-alt"></i> Templates
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="scheduled-tab"
+                data-toggle="tab"
+                href="#scheduled"
+                role="tab"
+              >
+                <i class="fas fa-calendar-alt"></i> Scheduled
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="sent-tab"
+                data-toggle="tab"
+                href="#sent"
+                role="tab"
+              >
+                <i class="fas fa-paper-plane"></i> Sent
+              </a>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="emailTabsContent">
+            <!-- Compose Email Tab -->
+            <div class="tab-pane fade show active" id="compose" role="tabpanel">
+              <div class="mt-4">
+                <form method="post" action="{% url 'compose_email' %}">
+                  {% csrf_token %}
+
+                  <div class="form-group">
+                    <label><strong>Select Recipients:</strong></label>
+                    <div class="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="selectAllDonors"
+                        name="recipient_type"
+                        value="all_donors"
+                      />
+                      <label class="custom-control-label" for="selectAllDonors"
+                        >All Donors</label
+                      >
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="eligibleDonors"
+                        name="recipient_type"
+                        value="eligible_donors"
+                      />
+                      <label class="custom-control-label" for="eligibleDonors"
+                        >Eligible Donors (Last donation > 3 months)</label
+                      >
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="specificBloodGroup"
+                        name="recipient_type"
+                        value="blood_group"
+                      />
+                      <label
+                        class="custom-control-label"
+                        for="specificBloodGroup"
+                        >Specific Blood Group</label
+                      >
+                    </div>
+                    <div
+                      class="form-group mt-2 ml-4"
+                      id="bloodGroupSelection"
+                      style="display: none"
+                    >
+                      <select class="form-control" name="blood_group">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                      </select>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="allPatients"
+                        name="recipient_type"
+                        value="all_patients"
+                      />
+                      <label class="custom-control-label" for="allPatients"
+                        >All Patients</label
+                      >
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="customEmails"
+                        name="recipient_type"
+                        value="custom"
+                      />
+                      <label class="custom-control-label" for="customEmails"
+                        >Custom Email List</label
+                      >
+                    </div>
+                    <div
+                      class="form-group mt-2 ml-4"
+                      id="customEmailsInput"
+                      style="display: none"
+                    >
+                      <textarea
+                        class="form-control"
+                        name="custom_emails"
+                        rows="3"
+                        placeholder="Enter email addresses separated by commas"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="emailSubject"><strong>Subject:</strong></label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="emailSubject"
+                      name="subject"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="emailTemplate"
+                      ><strong>Email Template:</strong></label
+                    >
+                    <select
+                      class="form-control"
+                      id="emailTemplate"
+                      name="template"
+                    >
+                      <option value="none">No Template (Blank)</option>
+                      <option value="donation_reminder">
+                        Donation Reminder
+                      </option>
+                      <option value="blood_drive">
+                        Blood Drive Announcement
+                      </option>
+                      <option value="urgent_request">
+                        Urgent Blood Request
+                      </option>
+                      <option value="thank_you">Thank You for Donating</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="emailMessage"><strong>Message:</strong></label>
+                    <textarea
+                      class="form-control"
+                      id="emailMessage"
+                      name="message"
+                      rows="10"
+                      required
+                    ></textarea>
+                    <small class="form-text text-muted">
+                      Available variables: {name}, {blood_group},
+                      {donation_date}, {expiry_date}
+                    </small>
+                  </div>
+
+                  <div class="form-group">
+                    <label><strong>Scheduling Options:</strong></label>
+                    <div class="custom-control custom-radio">
+                      <input
+                        type="radio"
+                        id="sendNow"
+                        name="schedule_option"
+                        value="now"
+                        class="custom-control-input"
+                        checked
+                      />
+                      <label class="custom-control-label" for="sendNow"
+                        >Send Immediately</label
+                      >
+                    </div>
+                    <div class="custom-control custom-radio">
+                      <input
+                        type="radio"
+                        id="scheduleLater"
+                        name="schedule_option"
+                        value="later"
+                        class="custom-control-input"
+                      />
+                      <label class="custom-control-label" for="scheduleLater"
+                        >Schedule for Later</label
+                      >
+                    </div>
+                    <div
+                      class="form-group mt-2 ml-4"
+                      id="scheduleDatetime"
+                      style="display: none"
+                    >
+                      <input
+                        type="datetime-local"
+                        class="form-control"
+                        name="schedule_time"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group text-center">
+                    <button type="submit" name="preview" class="btn btn-info">
+                      <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <button type="submit" name="send" class="btn btn-success">
+                      <i class="fas fa-paper-plane"></i> Send Email
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                      <i class="fas fa-undo"></i> Reset
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Email Templates Tab -->
+            <div class="tab-pane fade" id="templates" role="tabpanel">
+              <div class="mt-4">
+                <div class="card mb-3">
+                  <div class="card-header bg-light">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Donation Reminder</h5>
+                      <button
+                        class="btn btn-sm btn-primary use-template"
+                        data-template="donation_reminder"
+                      >
+                        <i class="fas fa-copy"></i> Use Template
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <pre>
+Dear {name},
+
+We hope this email finds you well. According to our records, you are now eligible to donate blood again since your last donation date of {donation_date}.
+
+Your blood type {blood_group} is currently needed in our blood bank. Would you like to schedule your next donation?
+
+Thank you for your continued support in saving lives.
+
+Warm regards,
+{hospital_name} Blood Bank Team
+{contact_number}</pre
+                    >
+                  </div>
+                </div>
+
+                <div class="card mb-3">
+                  <div class="card-header bg-light">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Blood Drive Announcement</h5>
+                      <button
+                        class="btn btn-sm btn-primary use-template"
+                        data-template="blood_drive"
+                      >
+                        <i class="fas fa-copy"></i> Use Template
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <pre>
+Dear {name},
+
+We are pleased to announce that {hospital_name} will be hosting a blood drive on {event_date} from {start_time} to {end_time}.
+
+As someone with {blood_group} blood type, your donation would be especially valuable. One donation can save up to three lives!
+
+Location: {location}
+Requirements: Valid ID, be well-rested and hydrated
+
+To schedule your appointment, please reply to this email or call us at {contact_number}.
+
+Thank you for your support in our mission to maintain adequate blood supplies for our community.
+
+Best regards,
+{hospital_name} Blood Bank Team</pre
+                    >
+                  </div>
+                </div>
+
+                <div class="card mb-3">
+                  <div class="card-header bg-light">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Emergency Blood Request</h5>
+                      <button
+                        class="btn btn-sm btn-primary use-template"
+                        data-template="emergency_request"
+                      >
+                        <i class="fas fa-copy"></i> Use Template
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <pre>
+URGENT: Blood Donation Needed
+
+Dear {name},
+
+We have an emergency situation requiring immediate donations of {blood_group} blood type.
+
+If you are available to donate in the next 24-48 hours, please contact us immediately at {contact_number} or reply to this email.
+
+Your quick response could help save a life in critical condition.
+
+Thank you for your immediate attention to this urgent request.
+
+Sincerely,
+{hospital_name} Blood Bank
+Emergency Response Team</pre
+                    >
+                  </div>
+                </div>
+
+                <div class="card mb-3">
+                  <div class="card-header bg-light">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <h5 class="mb-0">Thank You for Donation</h5>
+                      <button
+                        class="btn btn-sm btn-primary use-template"
+                        data-template="thank_you"
+                      >
+                        <i class="fas fa-copy"></i> Use Template
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <pre>
+Dear {name},
+
+Thank you for your recent blood donation on {donation_date}. Your generosity has made a significant impact.
+
+Your donation of {blood_group} blood type will help patients in need and potentially save up to three lives.
+
+You will be eligible to donate again on {next_eligible_date}. We hope to see you again!
+
+With heartfelt gratitude,
+{hospital_name} Blood Bank Team
+{contact_number}</pre
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
