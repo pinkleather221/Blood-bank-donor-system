@@ -37,7 +37,10 @@ urlpatterns = [
    
 
 
-
+    path('admin-emails/', views.admin_emails, name='admin_emails'),
+    path('compose-email/', views.compose_email, name='compose_email'),
+    path('send-email/', views.send_email, name='send_email'),
+    path('load-template/', views.load_template, name='load_template'),
 
     # path('',views.home_view,name=''),we removed this sline because we think it is notr serving any purpose
      #mod 3

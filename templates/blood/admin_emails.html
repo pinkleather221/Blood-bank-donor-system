@@ -1,0 +1,197 @@
+<!-- blood/templates/blood/admin_emails.html -->
+{% extends 'blood/adminbase.html' %}
+{% block content %}
+{% load static %}
+<div class="container-fluid">
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h4 class="mb-0">Email Campaign Management</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="card mb-3 bg-primary text-white">
+                <div class="card-body text-center">
+                  <h1><i class="fas fa-users"></i></h1>
+                  <h4>{{ donors.count }}</h4>
+                  <p>Total Donors</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card mb-3 bg-success text-white">
+                <div class="card-body text-center">
+                  <h1><i class="fas fa-user-friends"></i></h1>
+                  <h4>{{ patients.count }}</h4>
+                  <p>Total Patients</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card mb-3 bg-warning text-dark">
+                <div class="card-body text-center">
+                  <h1><i class="fas fa-sync-alt"></i></h1>
+                  <h4>{{ eligible_donors.count }}</h4>
+                  <p>Eligible Donors</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card mb-3 bg-danger text-white">
+                <div class="card-body text-center">
+                  <h1><i class="fas fa-exclamation-triangle"></i></h1>
+                  <h4>{{ urgent_requests }}</h4>
+                  <p>Urgent Requests</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mb-4">
+            <a href="{% url 'compose_email' %}" class="btn btn-primary btn-lg">
+              <i class="fas fa-envelope"></i> Compose New Email Campaign
+            </a>
+          </div>
+
+          <h5 class="mb-3">Recent Email Campaigns</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Recipients</th>
+                  <th>Sent By</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if email_campaigns %} {% for campaign in email_campaigns %}
+                <tr>
+                  <td>{{ campaign.date }}</td>
+                  <td>{{ campaign.subject }}</td>
+                  <td>{{ campaign.recipients }}</td>
+                  <td>{{ campaign.sent_by }}</td>
+                  <td>
+                    <span class="badge badge-success">Delivered</span>
+                  </td>
+                </tr>
+                {% endfor %} {% else %}
+                <tr>
+                  <td colspan="5" class="text-center">
+                    No email campaigns found
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Blood Type Distribution</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="donorBloodChart" width="400" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Eligible Donors by Blood Type</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="eligibleDonorsChart" width="400" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Blood type distribution chart
+    const donorCtx = document.getElementById('donorBloodChart').getContext('2d');
+    const donorChart = new Chart(donorCtx, {
+        type: 'pie',
+        data: {
+            labels: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+            datasets: [{
+                data: [
+                    {{ blood_counts.A_plus }}, 
+                    {{ blood_counts.A_minus}}, 
+                    {{ blood_counts.B_plus }}, 
+                    {{ blood_counts.B_minus }}, 
+                    {{ blood_counts.AB_plus }}, 
+                    {{ blood_counts.AB_minus }}, 
+                    {{ blood_counts.O_plus }}, 
+                    {{ blood_counts.O_minus }}
+                ],
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40',
+                    '#C9C9C9',
+                    '#5366FF'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Eligible donors chart
+    const eligibleCtx = document.getElementById('eligibleDonorsChart').getContext('2d');
+    const eligibleChart = new Chart(eligibleCtx, {
+        type: 'bar',
+        data: {
+            labels: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+            datasets: [{
+                label: 'Eligible Donors',
+                data: [
+                    {{ eligible_counts.A_plus }}, 
+                    {{ eligible_counts.A_minus }}, 
+                    {{ eligible_counts.B_plus }}, 
+                    {{ eligible_counts.B_minus }}, 
+                    {{ eligible_counts.AB_plus}}, 
+                    {{ eligible_counts.AB_minus }}, 
+                    {{ eligible_counts.O_plus }}, 
+                    {{ eligible_counts.O_minus }}
+                ],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true
+        }
+    });
+});
+</script>
+{% endblock %}

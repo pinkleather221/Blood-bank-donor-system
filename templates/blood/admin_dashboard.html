@@ -2,6 +2,17 @@
 {% block content %}
 <br><br>
 <div class="container">
+    <div class="row">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-envelope mr-2"></i> Email Campaigns
+                </h5>
+                <p class="card-text">Send email notifications to donors and patients.</p>
+                <a href="{% url 'admin_emails' %}" class="btn btn-primary">Manage Emails</a>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-sm-3">

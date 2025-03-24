@@ -12,12 +12,18 @@ from donor import models as dmodels
 from patient import models as pmodels
 from donor import forms as dforms
 from patient import forms as pforms
+from blood.models import BloodRequest, EmailCampaign
 
+from django.contrib import messages
+from django.template.loader import render_to_string
+from donor.models import BloodDonate, Donor
+from patient.models import  Patient
+from datetime import datetime, timedelta
 # mod 4
 import requests
 from django.views.decorators.csrf import csrf_exempt
 import json
-
+from django.utils import timezone
 # mod 2 chatbot 
 def chat_page(request):
     return render(request, 'blood/chat_widget.html')
@@ -349,3 +355,174 @@ def index_view(request):
     }
     return render(request, 'blood/index2.html', context=dict)
 
+
+
+# email mods 
+def admin_emails(request):
+    """View for the admin email dashboard"""
+    donors = Donor.objects.all()
+    patients = Patient.objects.all()
+    
+    # Get blood type counts for donors
+    blood_counts = {}
+    eligible_counts = {}
+    for blood_group in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']:
+        blood_counts[blood_group] = Donor.objects.filter(
+            bloodgroup=blood_group, 
+            status='APPROVED'
+        ).count()
+        
+        # Count eligible donors by blood group
+        three_months_ago = datetime.now().date() - timedelta(days=90)
+        eligible_counts[blood_group] = Donor.objects.filter(
+            status='APPROVED',
+            bloodgroup=blood_group,
+            last_donation_date__lt=three_months_ago
+        ).count()
+    
+    # Get donors eligible for donation (last donation was more than 3 months ago)
+    three_months_ago = datetime.now().date() - timedelta(days=90)
+    eligible_donors = Donor.objects.filter(
+        status='APPROVED',
+        last_donation_date__lt=three_months_ago
+    )
+    
+    # Count urgent blood requests
+    urgent_requests = BloodRequest.objects.filter(
+        is_urgent=True,
+        status='PENDING'
+    ).count()
+    
+    # Get recent email campaigns
+    email_campaigns = EmailCampaign.objects.all().order_by('-date_sent')[:10]
+    
+    return render(request, 'blood/admin_emails.html', {
+        'donors': donors,
+        'patients': patients,
+        'blood_counts': blood_counts,
+        'eligible_counts': eligible_counts,
+        'eligible_donors': eligible_donors,
+        'urgent_requests': urgent_requests,
+        'email_campaigns': email_campaigns
+    })
+
+def compose_email(request):
+    """View for composing an email"""
+    if request.method == 'POST':
+        recipient_type = request.POST.get('recipient_type')
+        blood_group = request.POST.get('blood_group', '')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        recipients = []
+        
+        if recipient_type == 'all_donors':
+            recipients = Donor.objects.filter(status='APPROVED').values_list('email', flat=True)
+        elif recipient_type == 'all_patients':
+            recipients = Patient.objects.all().values_list('email', flat=True)
+        elif recipient_type == 'blood_group_donors' and blood_group:
+            recipients = Donor.objects.filter(
+                status='APPROVED',
+                bloodgroup=blood_group
+            ).values_list('email', flat=True)
+        elif recipient_type == 'eligible_donors':
+            three_months_ago = timezone.now().date() - timedelta(days=90)
+            recipients = Donor.objects.filter(
+                status='APPROVED',
+                last_donation_date__lt=three_months_ago
+            ).values_list('email', flat=True)
+        
+        # Convert recipients QuerySet to list and filter out None values
+        recipient_list = [email for email in recipients if email is not None]
+        
+        # Create a display string for the first 5 recipients
+        recipient_display = ", ".join(recipient_list[:5])
+        
+        if len(recipient_list) > 5:
+            recipient_display += f" and {len(recipient_list) - 5} more"
+        
+        # Display preview before sending
+        return render(request, 'blood/email_preview.html', {
+            'recipient': recipient_display,
+            'recipient_list': json.dumps(recipient_list),  # Pass the list as JSON
+            'subject': subject,
+            'message': message
+        })
+    
+    return render(request, 'blood/compose_email.html')
+
+def send_email(request):
+    """View for sending emails after preview confirmation"""
+    if request.method == 'POST':
+        recipient_list = json.loads(request.POST.get('recipient_list', '[]'))
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        recipient_type = request.POST.get('recipient_type', 'custom')
+        
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                recipient_list,
+                fail_silently=False,
+            )
+  
+            # Record the email campaign
+            campaign = EmailCampaign(
+                subject=subject,
+                message=message,
+                recipient_type=recipient_type,
+                recipient_count=len(recipient_list),
+                sent_by=request.user
+            )
+            campaign.save()
+            
+            messages.success(request, f'Email successfully sent to {len(recipient_list)} recipients.')
+        except Exception as e:
+            messages.error(request, f'Failed to send email: {str(e)}')
+        
+        return redirect('admin_emails')
+    
+    return redirect('compose_email')
+
+def load_template(request):
+    """API endpoint to load an email template"""
+    template_name = request.GET.get('template')
+    template_data = {
+        'donation_reminder': {
+            'subject': 'Blood Donation Reminder',
+            'message': """Dear {name},
+
+We hope this email finds you well. According to our records, you are now eligible to donate blood again since your last donation date of {donation_date}.
+
+Your blood type {blood_group} is currently needed in our blood bank. Would you like to schedule your next donation?
+
+Thank you for your continued support in saving lives.
+
+Warm regards,
+{hospital_name} Blood Bank Team
+{contact_number}"""
+        },
+        'blood_drive': {
+            'subject': 'Upcoming Blood Drive Announcement',
+            'message': """Dear {name},
+
+We are pleased to announce that {hospital_name} will be hosting a blood drive on {event_date} from {start_time} to {end_time}.
+
+As someone with {blood_group} blood type, your donation would be especially valuable. One donation can save up to three lives!
+
+Location: {location}
+Requirements: Valid ID, be well-rested and hydrated
+
+To schedule your appointment, please reply to this email or call us at {contact_number}.
+
+Thank you for your support in our mission to maintain adequate blood supplies for our community.
+
+Best regards,
+{hospital_name} Blood Bank Team"""
+        },
+        # Add other templates here
+    }
+    
+    return JsonResponse(template_data.get(template_name, {'subject': '', 'message': ''}))

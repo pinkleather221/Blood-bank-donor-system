@@ -141,9 +141,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'nellymogere2002@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'Run2Th3H!lls@001'  # Use app password for Gmail
-DEFAULT_FROM_EMAIL = 'Chuka Blood Bank <nellymogere2002@gmail.com>'
+EMAIL_HOST_USER = ''  # Replace with your email
+EMAIL_HOST_PASSWORD = ''  # Use app password for Gmail
+DEFAULT_FROM_EMAIL = ''
 
 # Celery configuration
 CELERY_BROKER_URL = 'redis://localhost:6379/0'

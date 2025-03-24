@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
+from donor.models import Donor
 
 class Patient(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
@@ -13,7 +15,9 @@ class Patient(models.Model):
     address = models.CharField(max_length=40)
     mobile = models.CharField(max_length=20,null=False)
     email = models.EmailField(max_length=100, null=True, blank=True)  # New field
-    @property
+    assigned_donor = models.ForeignKey(Donor, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_patients')
+
+    property
     def get_name(self):
         return self.user.first_name+" "+self.user.last_name
     @property

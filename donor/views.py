@@ -95,8 +95,14 @@ def donor_view(request):
 def update_notification_settings(request):
     if request.method == 'POST':
         # Get the donor instance
-        donor = models.Donor.objects.get(user_id=request.user.id)
-        
+        # donor = models.Donor.objects.get(user_id=request.user.id)
+        try:
+            donor = models.Donor.objects.get(user_id=request.user.id)
+        except models.Donor.DoesNotExist:
+    # Handle the exception by creating a new Donor object or providing an error message
+            donor = models.Donor(user_id=request.user.id)
+            donor.save()
+            
         # Update email
         email = request.POST.get('email')
         if email:

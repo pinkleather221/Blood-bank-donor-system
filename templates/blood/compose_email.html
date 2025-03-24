@@ -1,0 +1,296 @@
+{% extends 'blood/adminbase.html' %}
+{% load static %}
+{% block content %}
+{% load custom_filters %}
+<div class="container-fluid">
+    <h3 class="text-center mt-3">Email Campaign Manager</h3>
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#compose" role="tab">
+                        <i class="fas fa-pen"></i> Compose Email
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#templates" role="tab">
+                        <i class="fas fa-file-alt"></i> Email Templates
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#analytics" role="tab">
+                        <i class="fas fa-chart-bar"></i> Blood Inventory
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="tab-content">
+                <!-- Compose Tab -->
+                <div class="tab-pane fade show active" id="compose" role="tabpanel">
+                    <div class="card mt-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Compose New Email</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="{% url 'compose_email' %}">
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label for="recipient_type">Recipients</label>
+                                    <select class="form-control" id="recipient_type" name="recipient_type" required>
+                                        <option value="">Select Recipients</option>
+                                        <option value="all_donors">All Donors</option>
+                                        <option value="all_patients">All Patients</option>
+                                        <option value="blood_group_donors">Donors by Blood Group</option>
+                                        <option value="eligible_donors">Eligible Donors (Last donation > 3 months)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group" id="blood_group_div" style="display:none;">
+                                    <label for="blood_group">Blood Group</label>
+                                    <select class="form-control" id="blood_group" name="blood_group">
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="subject">Subject</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="message">Message</label>
+                                    <textarea class="form-control" id="message" name="message" rows="10" required></textarea>
+                                    <small class="form-text text-muted">
+                                        You can use placeholders like {name}, {blood_group}, {donation_date}, etc. 
+                                        These will be replaced with actual values when sending.
+                                    </small>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-eye"></i> Preview Email
+                                </button>
+                                <a href="{% url 'admin_emails' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Email Templates Tab -->
+                <div class="tab-pane fade" id="templates" role="tabpanel">
+                    <div class="mt-4">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Donation Reminder</h5>
+                                    <button class="btn btn-sm btn-primary use-template" data-template="donation_reminder">
+                                        <i class="fas fa-copy"></i> Use Template
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <pre>Dear {name},
+
+We hope this email finds you well. According to our records, you are now eligible to donate blood again since your last donation date of {donation_date}.
+
+Your blood type {blood_group} is currently needed in our blood bank. Would you like to schedule your next donation?
+
+Thank you for your continued support in saving lives.
+
+Warm regards,
+{hospital_name} Blood Bank Team
+{contact_number}</pre>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Blood Drive Announcement</h5>
+                                    <button class="btn btn-sm btn-primary use-template" data-template="blood_drive">
+                                        <i class="fas fa-copy"></i> Use Template
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <pre>Dear {name},
+
+We are pleased to announce that {hospital_name} will be hosting a blood drive on {event_date} from {start_time} to {end_time}.
+
+As someone with {blood_group} blood type, your donation would be especially valuable. One donation can save up to three lives!
+
+Location: {location}
+Requirements: Valid ID, be well-rested and hydrated
+
+To schedule your appointment, please reply to this email or call us at {contact_number}.
+
+Thank you for your support in our mission to maintain adequate blood supplies for our community.
+
+Best regards,
+{hospital_name} Blood Bank Team</pre>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Emergency Blood Request</h5>
+                                    <button class="btn btn-sm btn-primary use-template" data-template="emergency_request">
+                                        <i class="fas fa-copy"></i> Use Template
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <pre>URGENT: Blood Donation Needed
+
+Dear {name},
+
+We have an emergency situation requiring immediate donations of {blood_group} blood type.
+
+If you are available to donate in the next 24-48 hours, please contact us immediately at {contact_number} or reply to this email.
+
+Your quick response could help save a life in critical condition.
+
+Thank you for your immediate attention to this urgent request.
+
+Sincerely,
+{hospital_name} Blood Bank
+Emergency Response Team</pre>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Thank You for Donation</h5>
+                                    <button class="btn btn-sm btn-primary use-template" data-template="thank_you">
+                                        <i class="fas fa-copy"></i> Use Template
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <pre>Dear {name},
+
+Thank you for your recent blood donation on {donation_date}. Your generosity has made a significant impact.
+
+Your donation of {blood_group} blood type will help patients in need and potentially save up to three lives.
+
+You will be eligible to donate again on {next_eligible_date}. We hope to see you again!
+
+With heartfelt gratitude,
+{hospital_name} Blood Bank Team
+{contact_number}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analytics Tab -->
+                <div class="tab-pane fade" id="analytics" role="tabpanel">
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Blood Group Inventory</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="bloodInventoryChart" width="400" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Eligible Donors</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Blood Group</th>
+                                                        <th>Total Donors</th>
+                                                        <th>Eligible Donors</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for bg, count in blood_counts.items %}
+                                                    <tr>
+                                                        <td>{{ bg }}</td>
+                                                        <td>{{ count }}</td>
+                                                        <td>{{ eligible_counts|get_item:bg }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/email.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Blood inventory chart
+    const ctx = document.getElementById('bloodInventoryChart').getContext('2d');
+    const bloodChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+            datasets: [{
+                label: 'Available Donors',
+                data: [
+                    {{ blood_counts.A_plus }}, 
+                    {{ blood_counts.A_minus }}, 
+                    {{ blood_counts.B_plus }}, 
+                    {{ blood_counts.B_minus }}, 
+                    {{ blood_counts.AB_plus }}, 
+                    {{ blood_counts.AB_minus }}, 
+                    {{ blood_counts.O_plus }}, 
+                    {{ blood_counts.O_minus}}
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(199, 199, 199, 0.6)',
+                    'rgba(83, 102, 255, 0.6)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true
+        }
+    });
+});
+</script>
+{% endblock %}
