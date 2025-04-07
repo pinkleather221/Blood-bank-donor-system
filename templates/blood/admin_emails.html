@@ -2,6 +2,7 @@
 {% extends 'blood/adminbase.html' %}
 {% block content %}
 {% load static %}
+{% load custom_filters %}
 <div class="container-fluid">
   <div class="row mt-4">
     <div class="col-md-12">
@@ -70,9 +71,9 @@
               <tbody>
                 {% if email_campaigns %} {% for campaign in email_campaigns %}
                 <tr>
-                  <td>{{ campaign.date }}</td>
+                  <td>{{ campaign.date_sent }}</td>
                   <td>{{ campaign.subject }}</td>
-                  <td>{{ campaign.recipients }}</td>
+                  <td>{{ campaign.recipient_type }}</td>
                   <td>{{ campaign.sent_by }}</td>
                   <td>
                     <span class="badge badge-success">Delivered</span>
@@ -116,11 +117,22 @@
     </div>
   </div>
 </div>
+<!-- Canvas elements for charts -->
+<canvas id="donorBloodChart" width="400" height="400"></canvas>
+<canvas id="eligibleDonorsChart" width="400" height="400"></canvas>
+
+<!-- Pass data safely to JS -->
+{{ blood_counts|json_script:"blood-data" }}
+{{ eligible_counts|json_script:"eligible-data" }}
 
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const bloodCounts = {{ blood_counts_json }};
+    const eligibleCounts = {{ eligible_counts_json }};
+
     // Blood type distribution chart
     const donorCtx = document.getElementById('donorBloodChart').getContext('2d');
     const donorChart = new Chart(donorCtx, {
@@ -129,24 +141,18 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
             datasets: [{
                 data: [
-                    {{ blood_counts.A_plus }}, 
-                    {{ blood_counts.A_minus}}, 
-                    {{ blood_counts.B_plus }}, 
-                    {{ blood_counts.B_minus }}, 
-                    {{ blood_counts.AB_plus }}, 
-                    {{ blood_counts.AB_minus }}, 
-                    {{ blood_counts.O_plus }}, 
-                    {{ blood_counts.O_minus }}
+                    bloodCounts.A_plus,
+                    bloodCounts.A_minus,
+                    bloodCounts.B_plus,
+                    bloodCounts.B_minus,
+                    bloodCounts.AB_plus,
+                    bloodCounts.AB_minus,
+                    bloodCounts.O_plus,
+                    bloodCounts.O_minus
                 ],
                 backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF',
-                    '#FF9F40',
-                    '#C9C9C9',
-                    '#5366FF'
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                    '#9966FF', '#FF9F40', '#C9C9C9', '#5366FF'
                 ]
             }]
         },
@@ -169,14 +175,14 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'Eligible Donors',
                 data: [
-                    {{ eligible_counts.A_plus }}, 
-                    {{ eligible_counts.A_minus }}, 
-                    {{ eligible_counts.B_plus }}, 
-                    {{ eligible_counts.B_minus }}, 
-                    {{ eligible_counts.AB_plus}}, 
-                    {{ eligible_counts.AB_minus }}, 
-                    {{ eligible_counts.O_plus }}, 
-                    {{ eligible_counts.O_minus }}
+                    eligibleCounts.A_plus,
+                    eligibleCounts.A_minus,
+                    eligibleCounts.B_plus,
+                    eligibleCounts.B_minus,
+                    eligibleCounts.AB_plus,
+                    eligibleCounts.AB_minus,
+                    eligibleCounts.O_plus,
+                    eligibleCounts.O_minus
                 ],
                 backgroundColor: 'rgba(75, 192, 192, 0.6)',
                 borderColor: 'rgba(75, 192, 192, 1)',

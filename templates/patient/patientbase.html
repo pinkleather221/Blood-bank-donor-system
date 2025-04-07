@@ -55,7 +55,7 @@ body{
    background-color: #f3f5f9;
 }
 .bg-danger {
-    background-color: #c32d22!important;
+    background-color: #69135c!important;
 }
 
 .wrapper{
@@ -163,7 +163,7 @@ body{
         <a style="color:white;" class="navbar-brand" href="/"><i class="fa fa-heartbeat"></i>&nbsp;<font face = "Comic sans MS" size ="4">Blood Bank Management System</font></a>
         
         <li class="nav-item">
-          <a class="nav-link" href="#" data-toggle="modal" data-target="#notificationSettings">
+          <a class="nav-link" style="color: white;" href="#" data-toggle="modal" data-target="#notificationSettings">
               <i class="fas fa-bell"></i> Notifications
           </a>
       </li>
@@ -182,7 +182,7 @@ body{
     <div class="sidebar">
         
         <ul>
-            <li><a style="text-decoration:none;" href="/"><i class="fas fa-home"></i>Home</a></li>
+            <li><a style="text-decoration:none;" href="/patient/patient-dashboard"><i class="fas fa-home"></i>Home</a></li>
             <li><a style="text-decoration:none;" href="/patient/make-request"><i class="fas fa-user-plus"></i>Make Request</a></li>
             <li><a style="text-decoration:none;" href="/patient/my-request"><i class="fas fa-history"></i>Request History</a></li>
 
@@ -217,7 +217,7 @@ body{
                   </button>
               </div>
               <div class="modal-body">
-                  <form method="post" action="{% url 'update-notification-settings' %}">
+                  <form method="post" action="{% url 'update-patient-notification-settings' %}">
                       {% csrf_token %}
                       <div class="form-group">
                           <label>Email Address</label>

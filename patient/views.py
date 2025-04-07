@@ -88,3 +88,28 @@ def my_request_view(request):
     patient= models.Patient.objects.get(user_id=request.user.id)
     blood_request=bmodels.BloodRequest.objects.all().filter(request_by_patient=patient)
     return render(request,'patient/my_request.html',{'blood_request':blood_request})
+
+
+@login_required(login_url='patientlogin')
+def update_patient_notification_settings(request):
+    if request.method == 'POST':
+        # Get the patient instance
+        try:
+            patient = models.Patient.objects.get(user_id=request.user.id)
+        except models.Patient.DoesNotExist:
+            # Handle missing patient instance
+            patient = models.Patient(user_id=request.user.id)
+            patient.save()
+
+        # Update email
+        email = request.POST.get('email')
+        if email:
+            request.user.email = email
+            request.user.save()
+            patient.email = email
+            patient.save()
+
+        # Redirect to patient dashboard
+        return redirect('patient-dashboard')
+
+    return redirect('patient-dashboard')

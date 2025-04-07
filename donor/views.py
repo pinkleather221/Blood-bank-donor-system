@@ -10,6 +10,9 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from blood import forms as bforms
 from blood import models as bmodels
+from django.utils import timezone
+from datetime import datetime
+from blood.email_utils import send_donation_request_received
 
 def donor_signup_view(request):
     userForm=forms.DonorUserForm()
@@ -46,23 +49,31 @@ def donor_dashboard_view(request):
     return render(request,'donor/donor_dashboard.html',context=dict)
 
 
+
 def donate_blood_view(request):
-    from blood.email_utils import send_donation_request_received
-    donation_form=forms.DonationForm()
-    if request.method=='POST':
-        donation_form=forms.DonationForm(request.POST)
+    donation_form = forms.DonationForm()
+
+    if request.method == 'POST':
+        donation_form = forms.DonationForm(request.POST)
         if donation_form.is_valid():
-            blood_donate=donation_form.save(commit=False)
-            blood_donate.bloodgroup=donation_form.cleaned_data['bloodgroup']
-            donor= models.Donor.objects.get(user_id=request.user.id)
-            blood_donate.donor=donor
-            blood_donate.save()
+            blood_donate = donation_form.save(commit=False)
+            blood_donate.bloodgroup = donation_form.cleaned_data['bloodgroup']
             
+            donor = models.Donor.objects.get(user_id=request.user.id)
+            blood_donate.donor = donor
+
+            # Update last donation date dynamically
+            donor.last_donation_date = timezone.now().date() - timedelta(days=90)
+            donor.save()
+
+            blood_donate.save()
+
             # Send email notification
             send_donation_request_received(donor)
 
             return HttpResponseRedirect('donation-history')  
-    return render(request,'donor/donate_blood.html',{'donation_form':donation_form})
+
+    return render(request, 'donor/donate_blood.html', {'donation_form': donation_form})
 
 def donation_history_view(request):
     donor= models.Donor.objects.get(user_id=request.user.id)

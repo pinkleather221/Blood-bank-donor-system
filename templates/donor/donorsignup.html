@@ -57,10 +57,11 @@
                             <div class="name">Email</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {% render_field userForm.email|attr:'required:true'  class="input--style-5"  %}
+                                    {% render_field userForm.email|attr:"type:email"|attr:"required:true"|attr:"pattern:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" class="input--style-5" %}
                                 </div>
                             </div>
                         </div>
+                        
 
                         <div class="form-row">
                             <div class="name">Username</div>
@@ -75,10 +76,36 @@
                             <div class="name">Password</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {% render_field userForm.password|attr:'required:true'  class="input--style-5"  %}
+                                    {% render_field userForm.password|attr:'required:true' class="input--style-5" type="password" id="passwordField" %}
+                                    <div class="input-group-append" style="position: relative;">
+                                        <button type="button" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                                            <i class="fa fa-eye" id="toggleIcon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const togglePassword = document.getElementById('togglePassword');
+                            const passwordField = document.getElementById('passwordField');
+                            const toggleIcon = document.getElementById('toggleIcon');
+                            
+                            togglePassword.addEventListener('click', function() {
+                                // Toggle the type attribute
+                                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                                passwordField.setAttribute('type', type);
+                                
+                                // Toggle the icon
+                                if (type === 'password') {
+                                    toggleIcon.className = 'fa fa-eye';
+                                } else {
+                                    toggleIcon.className = 'fa fa-eye-slash';
+                                }
+                            });
+                        });
+                        </script>
 
 
 
@@ -112,19 +139,61 @@
                             <div class="name">Address</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {% render_field donorForm.address|attr:'required:true'  class="input--style-5"  %}
+                                    {% render_field donorForm.address|attr:'required:true' class="input--style-5" id="addressField" list="tharakaNithiAddresses" placeholder="Enter a valid Tharaka Nithi County address" %}
+                                    <datalist id="tharakaNithiAddresses">
+                                        <option value="Chuka Town, Tharaka Nithi County">
+                                        <option value="Chogoria, Tharaka Nithi County">
+                                        <option value="Kathwana, Tharaka Nithi County">
+                                        <option value="Marimanti, Tharaka Nithi County">
+                                        <option value="Chiakariga, Tharaka Nithi County">
+                                        <option value="Magutuni, Tharaka Nithi County">
+                                        <option value="Mutindwa, Tharaka Nithi County">
+                                        <option value="Gatunga, Tharaka Nithi County">
+                                        <option value="Nkondi, Tharaka Nithi County">
+                                        <option value="Tunyai, Tharaka Nithi County">
+                                        <option value="Kibung'a, Tharaka Nithi County">
+                                        <option value="Kiereni, Tharaka Nithi County">
+                                        <option value="Mitheru, Tharaka Nithi County">
+                                        <option value="Muthambi, Tharaka Nithi County">
+                                        <option value="Kanyakine, Tharaka Nithi County">
+                                    </datalist>
+                                    <small class="text-muted" id="addressHelp">Please enter a valid address within Tharaka Nithi County, Kenya</small>
                                 </div>
                             </div>
                         </div>
+                        
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const addressField = document.getElementById('addressField');
+                            
+                            addressField.addEventListener('input', function() {
+                                const value = this.value.toLowerCase();
+                                const isTharakaNithi = value.includes('tharaka nithi') || 
+                                                      value.includes('chuka') || 
+                                                      value.includes('kathwana') || 
+                                                      value.includes('marimanti') || 
+                                                      value.includes('chogoria');
+                                
+                                if (this.value.length > 5 && !isTharakaNithi) {
+                                    document.getElementById('addressHelp').classList.add('text-danger');
+                                    document.getElementById('addressHelp').textContent = 'Address should be within Tharaka Nithi County';
+                                } else {
+                                    document.getElementById('addressHelp').classList.remove('text-danger');
+                                    document.getElementById('addressHelp').textContent = 'Please enter a valid address within Tharaka Nithi County, Kenya';
+                                }
+                            });
+                        });
+                        </script>
 
-                        <div class="form-row">
-                            <div class="name">Contact No.</div>
-                            <div class="value">
-                                <div class="input-group">
-                                    {% render_field donorForm.mobile|attr:'required:true'  class="input--style-5"  %}
-                                </div>
+                    <div class="form-row">
+                        <div class="name">Contact No.</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field donorForm.mobile|attr:'required:true'|attr:'pattern:^(\+254|0)7\d{8}$'|attr:'title:Enter a valid Kenyan phone number (e.g., 0712345678 or +254712345678)' class="input--style-5" %}
                             </div>
                         </div>
+                    </div>
+
 
                         <div class="form-row">
                             <div class="name">Photo</div>

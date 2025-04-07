@@ -1,41 +1,212 @@
 {% extends 'blood/adminbase.html' %}
 {% block content %}
 {% load widget_tweaks %}
-{%load static%}
-<br><br>
-<div class="container">
-    <H4 class="text-center">Donor's Detail</H4><br>
-    <table class="table table-light table-hover table-bordered table-striped">
-        <thead class="bg-dark">
-            <tr>
-                <th scope="col" style="color: rgb(192, 192, 192);">Name</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Photo</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Blood Group</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Address</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Contact</th>
-                <th style="color: rgb(192, 192, 192);">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in donors %}
-            <tr>
-                <td> {{t.get_name}}</td>
-                <td> <img src="{% static t.profile_pic.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
-                <td>{{t.bloodgroup}}</td>
-                <td>{{t.address}}</td>
-                <td>{{t.mobile}}</td>
-                
-                <td>
-                    <button class="btn btn-success btn-sm"><a  style="text-decoration: none;color: white;" href="{% url 'update-donor' t.id  %}">Edit</a> </button>
-                    <button class="btn btn-danger btn-sm"><a  style="text-decoration: none;color: white;" href="{% url 'delete-donor' t.id  %}">Delete</a> </button>
-                </td>
-            </tr>
-            {% endfor %}
+{% load static %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h3 class="font-weight-bold">
+                <i class="fas fa-hand-holding-heart mr-2" style="color: #d41010;"></i>
+                Donor Details
+            </h3>
+            <hr class="my-4" style="background-color: #d41010; height: 2px; width: 100px; margin: 0 auto;">
+        </div>
+    </div>
+<!-- Table Container -->
+<div class="card shadow-sm border-0 rounded-lg overflow-hidden">
+    <div class="card-body p-0">
+        <!-- Search and Filter Tools (Optional) -->
+        <div class="bg-light p-3 border-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchDonor" placeholder="Search donors...">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-white">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6 text-md-right mt-3 mt-md-0">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-filter mr-1"></i> Filter
+                    </button>
+                    <button class="btn btn-outline-success btn-sm ml-2">
+                        <i class="fas fa-download mr-1"></i> Export
+                    </button>
+                    <button class="btn btn-primary btn-sm ml-2">
+                        <i class="fas fa-plus mr-1"></i> Add Donor
+                    </button>
+                </div> -->
+            </div>
+        </div>
 
-        </tbody>
-    
-    </table>
+        <!-- Donors Table -->
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr class="bg-dark">
+                        <th scope="col" class="text-white font-weight-medium py-3">Name</th>
+                        <th scope="col" class="text-white font-weight-medium py-3">Photo</th>
+                        <th scope="col" class="text-white font-weight-medium py-3">Blood Group</th>
+                        <th scope="col" class="text-white font-weight-medium py-3">Address</th>
+                        <th scope="col" class="text-white font-weight-medium py-3">Contact</th>
+                        <th scope="col" class="text-white font-weight-medium py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in donors %}
+                    <tr class="border-bottom">
+                        <td class="align-middle py-3">
+                            <span class="font-weight-medium">{{t.get_name}}</span>
+                        </td>
+                        <td class="align-middle py-3">
+                            <img src="{% if t.profile_pic %}{% static t.profile_pic.url %}{% else %}{% static 'profile_pic/Donor/cutie.jpg' %}{% endif %}" 
+                                 alt="Profile" class="rounded-circle border" height="45px" width="45px" />
+                        </td>
+                        <td class="align-middle py-3">
+                            <span class="badge badge-pill px-3 py-2 
+                            {% if t.bloodgroup == 'A+' or t.bloodgroup == 'A-' %}badge-danger
+                            {% elif t.bloodgroup == 'B+' or t.bloodgroup == 'B-' %}badge-primary
+                            {% elif t.bloodgroup == 'AB+' or t.bloodgroup == 'AB-' %}badge-warning
+                            {% else %}badge-success{% endif %}">
+                                {{t.bloodgroup}}
+                            </span>
+                        </td>
+                        <td class="align-middle py-3">
+                            <span class="text-truncate d-inline-block" style="max-width: 150px;" 
+                                  data-toggle="tooltip" title="{{t.address}}">
+                                {{t.address}}
+                            </span>
+                        </td>
+                        <td class="align-middle py-3">
+                            <a href="tel:{{t.mobile}}" class="text-decoration-none">
+                                <i class="fas fa-phone-alt mr-1 text-muted"></i> {{t.mobile}}
+                            </a>
+                        </td>
+                        <td class="align-middle py-3">
+                            <a href="{% url 'update-donor' t.id %}" class="btn btn-sm btn-outline-primary mr-1">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger" data-toggle="modal" 
+                               data-target="#deleteModal{{t.id}}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                            
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal{{t.id}}" tabindex="-1" role="dialog" 
+                                 aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete the donor record for <strong>{{t.get_name}}</strong>?
+                                            This action cannot be undone.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <a href="{% url 'delete-donor' t.id %}" class="btn btn-danger">
+                                                Confirm Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="my-3 text-muted">
+                                <i class="fas fa-user-slash fa-3x mb-3"></i>
+                                <p>No donor records found</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
-
+</div>
+<!-- Custom CSS -->
+<style>
+    /* Blood group badge styling */
+    .badge-pill {
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+    
+    /* Table row hover effect */
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    /* Smooth transitions */
+    .btn, .badge {
+        transition: all 0.3s ease;
+    }
+    
+    /* Button hover effects */
+    .btn-outline-primary:hover, .btn-outline-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Make sure table headers align with content */
+    table th, table td {
+        vertical-align: middle !important;
+    }
+    
+    /* Improved spacing for mobile */
+    @media (max-width: 767.98px) {
+        .container {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+    
+    /* Add tooltip styles */
+    [data-toggle="tooltip"] {
+        cursor: help;
+    }
+</style>
+<!-- Add necessary JavaScript for tooltips and search -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips if Bootstrap JS is available
+        if (typeof $().tooltip === 'function') {
+            $('[data-toggle="tooltip"]').tooltip();
+        }
+        
+        // Simple search functionality
+        document.getElementById('searchDonor').addEventListener('keyup', function() {
+            let input = this.value.toLowerCase();
+            let table = document.querySelector('table');
+            let rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                let shouldShow = false;
+                let cells = rows[i].getElementsByTagName('td');
+                
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().indexOf(input) > -1) {
+                        shouldShow = true;
+                        break;
+                    }
+                }
+                
+                rows[i].style.display = shouldShow ? '' : 'none';
+            }
+        });
+    });
+</script>
 {% endblock content %}

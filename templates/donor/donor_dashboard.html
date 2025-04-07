@@ -3,119 +3,167 @@
 {% load static %}
 {% load custom_filters %}
 
-<br><br>
-<div class="container">
-
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header bg-info">
-                    <h4 class="text-white text-center">Your Dashboard</h4>
-                    
-                </div>
-                <div class="card-body">
-                    <p><strong>Name:</strong> {{donor.get_name}}</p>
-                    <p><strong>Blood Group:</strong> {{donor.bloodgroup}}</p>
-                    <p><strong>Mobile:</strong> {{donor.mobile}}</p>
-                    <p><strong>Email:</strong> 
-                        {% if donor.email %}
-                        {{donor.email}}
-                        {% elif donor.user.email %}
-                        {{donor.user.email}}
-                        {% else %}
-                        Not provided
-                        {% endif %}
-                    </p>
-                    <p><strong>Address:</strong> {{donor.address}}</p>
-                    
-                    {% if donor.last_donation_date %}
-                    <p><strong>Last Donation:</strong> {{donor.last_donation_date|date:"F d, Y"}}</p>
-                    {% else %}
-                    <p><strong>Last Donation:</strong> No previous donations recorded</p>
-                    {% endif %}
-                    
-                    {% if donor.last_donation_date %}
-                    {% with next_donation_date=donor.last_donation_date|date_add:90 %}
-                            {% if today > next_donation_date %}
-                            <div class="alert alert-success">
-                                <strong>You are eligible to donate again!</strong>
-                            </div>
-                            {% else %}
-                            <div class="alert alert-info">
-                                <strong>You'll be eligible to donate again on:</strong> {{next_donation_date|date:"F d, Y"}}
-                            </div>
-                            {% endif %}
-                        {% endwith %}
-                    {% else %}
-                    <div class="alert alert-success">
-                        <strong>You are eligible to donate!</strong>
+<div class="container-fluid bg-light py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Personal Information Section -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-user-circle me-2"></i>Personal Profile
+                        </h3>
                     </div>
-                    {% endif %}
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="avatar-placeholder bg-soft-primary rounded-circle mx-auto mb-3" style="width: 120px; height: 120px; background-color: rgba(59, 130, 246, 0.1);">
+                                <i class="fas fa-user fa-4x text-primary" style="line-height: 120px;"></i>
+                            </div>
+                            <h4 class="fw-bold">{{donor.get_name}}</h4>
+                            <p class="text-muted">Blood Donor</p>
+                        </div>
+                        <div class="profile-details">
+                            <div class="row mb-3">
+                                <div class="col-5 text-muted">Blood Group</div>
+                                <div class="col-7 fw-bold text-danger">{{donor.bloodgroup}}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5 text-muted">Mobile</div>
+                                <div class="col-7">{{donor.mobile}}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5 text-muted">Email</div>
+                                <div class="col-7">
+                                    {% if donor.email %}
+                                        {{donor.email}}
+                                    {% elif donor.user.email %}
+                                        {{donor.user.email}}
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 text-muted">Address</div>
+                                <div class="col-7">{{donor.address}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donation Status and Request Statistics Section -->
+            <div class="col-lg-8 col-md-6">
+                <div class="row g-4">
+                    <!-- Donation Status Card -->
+                    <div class="col-12">
+                        <div class="card shadow-lg border-0 rounded-4">
+                            <div class="card-header bg-success text-white py-3">
+                                <h4 class="card-title mb-0">
+                                    <i class="fas fa-heartbeat me-2"></i>Donation Status
+                                </h4>
+                            </div>
+                            <div class="card-body p-4">
+                                {% if donor.last_donation_date %}
+                                    {% with next_donation_date=donor.last_donation_date|date_add:90 %}
+                                        {% if today > next_donation_date %}
+                                            <div class="alert alert-success d-flex align-items-center" role="alert">
+                                                <i class="fas fa-check-circle me-3 fa-2x"></i>
+                                                <div>
+                                                    <h5 class="alert-heading">Donation Ready!</h5>
+                                                    <p class="mb-0">You are eligible to donate blood again.</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center">
+                                                <div class="col-md-6">
+                                                    <small class="text-muted">Last Donation</small>
+                                                    <p class="h5">{{donor.last_donation_date|date:"F d, Y"}}</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <small class="text-muted">Next Eligible Date</small>
+                                                    <p class="h5 text-success">Immediate</p>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="alert alert-info d-flex align-items-center" role="alert">
+                                                <i class="fas fa-clock me-3 fa-2x"></i>
+                                                <div>
+                                                    <h5 class="alert-heading">Waiting Period</h5>
+                                                    <p class="mb-0">You'll be eligible to donate again on: 
+                                                    <strong>{{next_donation_date|date:"F d, Y"}}</strong></p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center">
+                                                <div class="col-md-6">
+                                                    <small class="text-muted">Last Donation</small>
+                                                    <p class="h5">{{donor.last_donation_date|date:"F d, Y"}}</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <small class="text-muted">Next Eligible Date</small>
+                                                    <p class="h5 text-info">{{next_donation_date|date:"F d, Y"}}</p>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% else %}
+                                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                                        <i class="fas fa-heart me-3 fa-2x"></i>
+                                        <div>
+                                            <h5 class="alert-heading">First-Time Donor</h5>
+                                            <p class="mb-0">You are eligible to donate! Your contribution can save lives.</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Request Statistics Card -->
+                    <div class="col-12">
+                        <div class="card shadow-lg border-0 rounded-4">
+                            <div class="card-header bg-info text-white py-3">
+                                <h4 class="card-title mb-0">
+                                    <i class="fas fa-chart-bar me-2"></i>Request Statistics
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="p-3 bg-light rounded-3 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fa fa-user-plus fa-2x text-primary mb-2"></i>
+                                            <h6 class="text-muted mb-1">Total Requests</h6>
+                                            <p class="h4 text-primary mb-0">{{requestmade}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="p-3 bg-light rounded-3 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-sync fa-2x text-warning mb-2"></i>
+                                            <h6 class="text-muted mb-1">Pending</h6>
+                                            <p class="h4 text-warning mb-0">{{requestpending}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="p-3 bg-light rounded-3 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                            <h6 class="text-muted mb-1">Approved</h6>
+                                            <p class="h4 text-success mb-0">{{requestapproved}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="p-3 bg-light rounded-3 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                                            <h6 class="text-muted mb-1">Rejected</h6>
+                                            <p class="h4 text-danger mb-0">{{requestrejected}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row mt-4">
-
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <i class="fa fa-user-plus xyz" style="color: #1e88e5;"></i>
-                    </div><br>
-                    <div>
-                        Request Made <br>
-                        {{requestmade}}
-                    </div>                             
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <i class="fas fa-sync xyz" style="color:#efb000;"></i>
-                    </div><br>
-                    <div>
-                        Pending Request <br>
-                        {{requestpending}}
-                    </div>                             
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <i class="fas fa-check-circle xyz" style="color: green;"></i>
-                    </div><br>
-                    <div>
-                        Approved Request<br>
-                        {{requestapproved}}
-                    </div>                             
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <i class="fas fa-times-circle xyz" style="color: red;"></i>
-                    </div><br>
-                    <div>
-                        Rejected Request <br>
-                        {{requestrejected}}
-                    </div>                             
-                </div>
-            </div>
-        </div>
-
-    </div>
-
 </div>
 
 {% endblock content %}

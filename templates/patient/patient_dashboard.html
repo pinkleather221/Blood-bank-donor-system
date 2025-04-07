@@ -1,118 +1,152 @@
 {% extends 'patient/patientbase.html' %}
 {% block content %}
-<head>
-    <style>
-            .xyz{     
-        color: blue; 
-        font-size: 3ex;   
-    }
-    </style>
-</head>
-<br><br>
-<div class="container">
-  <div class="row">
-      <div class="col-md-8 offset-md-2">
-          <div class="card">
-              <div class="card-header bg-info">
-                  <h4 class="text-white text-center">Your Dashboard</h4>
-              </div>
-              <div class="card-body">
-                  <p><strong>Name:</strong> {{patient.get_name}}</p>
-                  <p><strong>Blood Group:</strong> {{patient.bloodgroup}}</p>
-                  <p><strong>Disease:</strong> {{patient.disease}}</p>
-                  <p><strong>Doctor:</strong> {{patient.doctorname}}</p>
-                  <p><strong>Mobile:</strong> {{patient.mobile}}</p>
-                  <p><strong>Email:</strong> 
-                      {% if patient.email %}
-                      {{patient.email}}
-                      {% elif patient.user.email %}
-                      {{patient.user.email}}
-                      {% else %}
-                      Not provided
-                      {% endif %}
-                  </p>
-                  <p><strong>Address:</strong> {{patient.address}}</p>
-                  
-                  <div class="alert alert-info">
-                      <p><strong>Email Notifications:</strong> 
-                          {% if patient.email or patient.user.email %}
-                          You will receive email notifications about your blood requests.
-                          {% else %}
-                          Please add an email address to receive notifications about your blood requests.
-                          {% endif %}
-                      </p>
-                  </div>
-                  
-                  <div class="text-center">
-                      <a href="{% url 'make-request' %}" class="btn btn-primary">Request Blood</a>
-                      <a href="{% url 'my-request' %}" class="btn btn-info">My Requests</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
-<div class="container">
-
- 
+<div class="container-fluid py-4">
     <div class="row">
-      <div class="col-sm-3">
-        <div class="card bg-light">
-          <div class="card-body">
-              <div class="blood">
-                <i class="fa fa-user-plus xyz" style="color: #1e88e5;"></i>
-              </div><br>
-              <div>
-                Request Made <br>
-                  {{requestmade}}
-              </div>                            
-          </div>
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i>Patient Dashboard
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="personal-info mb-4">
+                                <h4 class="text-primary mb-3">
+                                    <i class="fas fa-user me-2"></i>Personal Details
+                                </h4>
+                                <div class="info-group">
+                                    <strong>Name:</strong> 
+                                    <span class="text-muted">{{patient.get_name}}</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Blood Group:</strong> 
+                                    <span class="badge bg-danger">{{patient.bloodgroup}}</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Disease:</strong> 
+                                    <span class="text-muted">{{patient.disease}}</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Doctor:</strong> 
+                                    <span class="text-muted">{{patient.doctorname}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="contact-info mb-4">
+                                <h4 class="text-primary mb-3">
+                                    <i class="fas fa-address-book me-2"></i>Contact Information
+                                </h4>
+                                <div class="info-group">
+                                    <strong>Mobile:</strong> 
+                                    <span class="text-muted">{{patient.mobile}}</span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Email:</strong> 
+                                    <span class="text-muted">
+                                        {% if patient.email %}
+                                            {{patient.email}}
+                                        {% elif patient.user.email %}
+                                            {{patient.user.email}}
+                                        {% else %}
+                                            Not provided
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="info-group">
+                                    <strong>Address:</strong> 
+                                    <span class="text-muted">{{patient.address}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fas fa-envelope me-2"></i>
+                        {% if patient.email or patient.user.email %}
+                            You will receive email notifications about your blood requests.
+                        {% else %}
+                            Please add an email address to receive notifications about your blood requests.
+                        {% endif %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{% url 'make-request' %}" class="btn btn-primary me-3">
+                            <i class="fas fa-plus-circle me-2"></i>Request Blood
+                        </a>
+                        <a href="{% url 'my-request' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list-alt me-2"></i>My Requests
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <div class="col-sm-3">
-        <div class="card bg-light">
-            <div class="card-body">
-                <div class="blood">
-                  <i class="fas fa-sync xyz" style="color:#efb000;"></i>
-                </div><br>
-                <div>
-                    Pending Request <br>
-                    {{requestpending}}
-                </div>                            
-            </div>
-          </div>
-      </div>
-
-      <div class="col-sm-3">
-          <div class="card bg-light">
-              <div class="card-body">
-                  <div class="blood">
-                    <i class="fas fa-check-circle xyz" style="color: green;"></i>
-                  </div><br>
-                  <div>
-                       Approved Request<br>
-                      {{requestapproved}}
-                  </div>                            
-              </div>
-            </div>
-      </div>
-      <div class="col-sm-3">
-          <div class="card bg-light">
-              <div class="card-body">
-                  <div class="blood">
-                    <i class="fas fa-times-circle xyz" style="color: red;"></i>
-                  </div><br>
-                  <div>
-                       Rejected Request <br>
-                      {{requestrejected}}
-                  </div>                            
-              </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h4 class="text-primary mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Request Statistics
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="p-3 bg-soft-primary rounded">
+                                <i class="fa fa-user-plus fa-2x text-primary mb-2"></i>
+                                <h5 class="mb-1">Requests Made</h5>
+                                <p class="h3 text-primary">{{requestmade}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="p-3 bg-soft-warning rounded">
+                                <i class="fas fa-sync fa-2x text-warning mb-2"></i>
+                                <h5 class="mb-1">Pending Requests</h5>
+                                <p class="h3 text-warning">{{requestpending}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="p-3 bg-soft-success rounded">
+                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                <h5 class="mb-1">Approved Requests</h5>
+                                <p class="h3 text-success">{{requestapproved}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="p-3 bg-soft-danger rounded">
+                                <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                                <h5 class="mb-1">Rejected Requests</h5>
+                                <p class="h3 text-danger">{{requestrejected}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
-
+<style>
+    /* Additional Custom Styles */
+    body {
+        background-color: #f4f6f9;
+    }
+    .bg-gradient-primary {
+        background: linear-gradient(to right, #4e73df 0%, #224abe 100%);
+    }
+    .info-group {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    .bg-soft-primary { background-color: rgba(78, 115, 223, 0.1); }
+    .bg-soft-warning { background-color: rgba(246, 194, 62, 0.1); }
+    .bg-soft-success { background-color: rgba(28, 200, 138, 0.1); }
+    .bg-soft-danger { background-color: rgba(231, 74, 59, 0.1); }
+</style>
 {% endblock content %}

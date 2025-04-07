@@ -2,63 +2,114 @@
 {% block content %}
 {% load widget_tweaks %}
 {%load static%}
-<head>
-    <style>
-        .label {
-     color: white;
-     padding: 8px;
-   }
-   
-   .success {background-color: #4CAF50;} /* Green */
-   .info {background-color: #2196F3;} /* Blue */
-   .warning {background-color: #ff9800;} /* Orange */
-   .danger {background-color: #f44336;} /* Red */
-   .other {background-color: #e7e7e7; color: black;} /* Gray */
-    </style>
-   </head>
-<br><br>
-<div class="container">
-    <H4 class="text-center">My Blood Requests</H4><br>
-    <table class="table table-light table-hover table-bordered table-striped">
-        <thead class="bg-dark">
-            <tr>
-                <th scope="col" style="color: rgb(192, 192, 192);">Patient Name</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Patient Age</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Reason</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Blood Group</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Unit</th>
-                <th scope="col" style="color: rgb(192, 192, 192);"> Date</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Status</th>
+
+<div class="container-fluid px-4 py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white py-4">
+                    <h2 class="text-center mb-0">
+                        <i class="fas fa-hand-holding-medical me-3"></i>Blood Request History
+                    </h2>
+                </div>
                 
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in blood_request %}
-            <tr>
-                <td> {{t.patient_name}}</td>
-                
-                <td>{{t.patient_age}}</td>
-                <td>{{t.reason}}</td>
-                <td>{{t.bloodgroup}}</td>
-                <td>{{t.unit}}</td>
-                <td>{{t.date}}</td>
-                {% if t.status == 'Approved' %}
-                <td><span class="label success"> Approved</span></td>
-                
-                {% elif t.status == 'Rejected' %}
-                <td><span class="label danger">Rejected</span></td>
+                {% if blood_request %}
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="px-4 py-3 text-muted">Patient Details</th>
+                                    <th class="px-4 py-3 text-muted">Medical Request</th>
+                                    <th class="px-4 py-3 text-muted">Blood Information</th>
+                                    <th class="px-4 py-3 text-muted">Request Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in blood_request %}
+                                <tr class="border-bottom">
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon-stack me-3">
+                                                <i class="fas fa-user-injured fa-2x text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-1">{{request.patient_name}}</h5>
+                                                <p class="text-muted mb-0">
+                                                    <i class="fas fa-birthday-cake me-2"></i>
+                                                    Age: {{request.patient_age}} years
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-4 py-3">
+                                        <h5 class="mb-1">
+                                            <i class="fas fa-notes-medical me-2 text-warning"></i>
+                                            {{request.reason}}
+                                        </h5>
+                                        <p class="text-muted mb-0">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            Requested: {{request.date|date:"d M Y"}}
+                                        </p>
+                                    </td>
+                                    
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex flex-column">
+                                            <h5 class="mb-2">
+                                                <span class="text-danger">
+                                                    <i class="fas fa-tint me-2"></i>Blood Group: {{request.bloodgroup}}
+                                                </span>
+                                            </h5>
+                                            <p class="text-muted mb-0">
+                                                <i class="fas fa-flask me-2 text-info"></i>
+                                                Requested Unit: {{request.unit}} ml
+                                            </p>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex flex-column">
+                                            <h5 class="mb-2">
+                                                {% if request.status == 'Approved' %}
+                                                    <span class="text-success">
+                                                        <i class="fas fa-check-circle me-2"></i>Request Approved
+                                                    </span>
+                                                {% elif request.status == 'Rejected' %}
+                                                    <span class="text-danger">
+                                                        <i class="fas fa-times-circle me-2"></i>Request Rejected
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-warning">
+                                                        <i class="fas fa-spinner me-2"></i>Pending Review
+                                                    </span>
+                                                {% endif %}
+                                            </h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 {% else %}
-                <td><span style="color: white;margin-left: 0px;" class="label info">Pending</span></td>
+                <div class="card-body text-center py-5">
+                    <div class="alert alert-warning d-inline-block" role="alert">
+                        <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
+                        <span class="h4">No blood requests found. Start your first request today!</span>
+                    </div>
+                </div>
                 {% endif %}
                 
-
-            </tr>
-            {% endfor %}
-
-        </tbody>
-    
-    </table>
+                <div class="card-footer bg-light py-3 text-center">
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Your blood request history helps track critical medical support
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-{% endblock content %}
+{% endblock content %} 

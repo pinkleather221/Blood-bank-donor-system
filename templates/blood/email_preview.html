@@ -26,9 +26,10 @@
                     <div class="text-center mt-4">
                         <form method="post" action="{% url 'send_email' %}">
                             {% csrf_token %}
-                            <input type="hidden" name="recipient" value="{{recipient}}">
-                            <input type="hidden" name="subject" value="{{subject}}">
-                            <input type="hidden" name="message" value="{{message}}">
+                            <input type="hidden" name="recipient_list" value="{{ recipient_list }}">
+                            <input type="hidden" name="subject" value="{{ subject }}">
+                            <input type="hidden" name="message" value="{{ message }}">
+                            <input type="hidden" name="recipient_type" value="{{ recipient_type }}">
                             <button type="submit" class="btn btn-success">
                                 <i class="fas fa-paper-plane"></i> Send Email
                             </button>
@@ -39,6 +40,13 @@
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                         </form>
+                        <script>
+                            // Get the data from the script tag
+                            const recipientListData = JSON.parse(document.getElementById('recipient-list-data').textContent);
+                            
+                            // Then use it in your form when submitting
+                            document.querySelector('input[name="recipient_list"]').value = JSON.stringify(recipientListData);
+                        </script>
                     </div>
                 </div>
             </div>

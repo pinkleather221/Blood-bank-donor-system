@@ -1,75 +1,231 @@
 {% extends 'blood/adminbase.html' %}
 {% block content %}
 {% load widget_tweaks %}
-{%load static%}
-<head>
-    <style>
-        .label {
-     color: white;
-     padding: 8px;
-   }
-   
-   .success {background-color: #4CAF50;} /* Green */
-   .info {background-color: #2196F3;} /* Blue */
-   .warning {background-color: #ff9800;} /* Orange */
-   .danger {background-color: #f44336;} /* Red */
-   .other {background-color: #e7e7e7; color: black;} /* Gray */
-    </style>
-   </head>
-<br><br>
-<div class="container">
-    <H4 class="text-center">Blood Donation Details</H4><br>
-    <table class="table table-light table-hover table-bordered table-striped">
-        <thead class="bg-dark">
-            <tr>
-                <th scope="col" style="color: rgb(192, 192, 192);">Donor's Name</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Disease</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Age</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Blood Group</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Unit</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Request Date</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Status</th>
-                <th style="color: rgb(192, 192, 192);">Action</th>
-                <th scope="col" style="color: rgb(192, 192, 192);">Health Check</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in donations %}
-            <tr>
-                <td> {{t.donor}}</td>
-                <td> {{t.disease}}</td>
-                <td> {{t.age}}</td>
-                <td>{{t.bloodgroup}}</td>
-                <td>{{t.unit}}</td>
-                <td>{{t.date}}</td>
-                <td>{{t.status}}</td>
-                {% if t.status == 'Pending' %}
-                <td>
-                    <button class="btn btn-success btn-sm"><a  style="text-decoration: none;color: white;" href="{% url 'approve-donation' t.id  %}"><i class="fa fa-check"></i> Approve</a> </button>
-                    <button class="btn btn-danger btn-sm"><a  style="text-decoration: none;color: white;" href="{% url 'reject-donation' t.id  %}"><i class="fa fa-times"></i> Reject</a> </button>
-                </td>
-                {% elif  t.status == 'Approved' %}
-                <td><span class="label success">{{t.unit}} Unit Added To Stock</span></td>
+{% load static %}
 
-                {% else %}
-                <td><span class="label danger">0 Unit Added To Stock</span></td> 
-                {% endif %}
-                <td>
-                    {% if d.health_check_passed %}
-                    <span class="badge badge-success">Passed</span>
-                    {% elif d.status == 'Rejected' %}
-                    <span class="badge badge-danger">Failed</span>
-                    {% else %}
-                    <span class="badge badge-warning">Pending</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+<style>
+    /* Custom Color Palette */
+    :root {
+        --primary-color: #6a11cb;
+        --secondary-color: #2575fc;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #17a2b8;
+        --light-bg: #f8f9fa;
+    }
 
-        </tbody>
-    
-    </table>
+    /* Enhanced Table Styling with Increased Spacing and Font Size */
+    .table-donation {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        font-size: 1rem; /* Increased base font size */
+    }
+
+    .table-donation thead {
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        color: white !important;
+    }
+
+    .table-donation th {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none !important;
+        padding: 1.25rem !important; /* Increased padding for more space */
+        font-size: 1rem; /* Slightly larger font for headers */
+    }
+
+    .table-donation tbody td {
+        padding: 1.25rem !important; /* Increased padding for more space */
+        vertical-align: middle !important;
+    }
+
+    .table-donation tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table-donation tbody tr:hover {
+        background-color: rgba(106, 17, 203, 0.05);
+        transform: translateY(-2px);
+    }
+
+    /* Status and Badge Styling */
+    .status-badge {
+        border-radius: 20px;
+        padding: 8px 12px; /* Increased padding */
+        font-size: 0.9em; /* Slightly larger font */
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* Container and Overall Layout */
+    .container {
+        max-width: 1200px; /* Wider container */
+    }
+
+    /* Responsive Typography */
+    @media (max-width: 768px) {
+        .table-donation {
+            font-size: 0.9rem; /* Slightly smaller on mobile */
+        }
+        
+        .table-donation th, .table-donation td {
+            padding: 0.75rem !important;
+        }
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 2.5rem; /* More space before the table */
+    }
+
+    .page-header h3 {
+        font-size: 1.75rem; /* Increased header size */
+        margin-bottom: 1rem;
+    }
+
+    /* Badges and Buttons */
+    .badge, .btn {
+        font-size: 0.9rem; /* Slightly larger badge and button text */
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row page-header">
+        <div class="col-12 text-center">
+            <h3 class="font-weight-bold text-primary mb-3">
+                <i class="fas fa-tint mr-3" style="color: #6a11cb; font-size: 1.5rem;"></i>
+                Blood Donation Management
+            </h3>
+            <hr class="my-3" style="background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); height: 3px; width: 150px; margin: 0 auto;">
+        </div>
+    </div>
+
+    <div class="card shadow-lg border-0 rounded-lg overflow-hidden">
+        <div class="card-body p-0">
+            <!-- Search Section with More Space -->
+            <div class="bg-light p-4 border-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-lg">
+                            <input type="text" class="form-control form-control-lg" id="searchDonation" 
+                                   placeholder="🔍 Search donations..." style="font-size: 1rem;">
+                            <div class="input-group-append">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donations Table with Increased Spacing -->
+            <div class="table-responsive">
+                <table class="table table-hover table-donation mb-0">
+                    <thead>
+                        <tr>
+                            <th>Donor's Name</th>
+                            <th>Disease</th>
+                            <th>Age</th>
+                            <th>Blood Group</th>
+                            <th>Unit</th>
+                            <th>Request Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Health Check</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in donations %}
+                        <tr>
+                            <td>{{t.donor}}</td>
+                            <td>{{t.disease}}</td>
+                            <td>{{t.age}}</td>
+                            <td>
+                                <span class="badge badge-pill 
+                                    {% if t.bloodgroup == 'A+' or t.bloodgroup == 'A-' %}badge-danger
+                                    {% elif t.bloodgroup == 'B+' or t.bloodgroup == 'B-' %}badge-primary
+                                    {% elif t.bloodgroup == 'AB+' or t.bloodgroup == 'AB-' %}badge-warning
+                                    {% else %}badge-success{% endif %}">
+                                    {{t.bloodgroup}}
+                                </span>
+                            </td>
+                            <td>{{t.unit}}</td>
+                            <td>{{t.date}}</td>
+                            <td>
+                                <span class="badge status-badge 
+                                    {% if t.status.lower == 'pending' %}status-pending
+                                    {% elif t.status.lower == 'approved' %}status-approved
+                                    {% else %}status-rejected{% endif %}">
+                                    {{t.status}}
+                                </span>
+                            </td>
+                            <td>
+                                {% if t.status.lower == 'pending' %}
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'approve-donation' t.id %}" class="btn btn-success btn-sm">
+                                            <i class="fa fa-check mr-1"></i> Approve
+                                        </a>
+                                        <a href="{% url 'reject-donation' t.id %}" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-times mr-1"></i> Reject
+                                        </a>
+                                    </div>
+                                {% elif t.status.lower == 'approved' %}
+                                    <span class="badge badge-success">
+                                        {{t.unit}} Unit Added
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-danger">
+                                        0 Unit Added
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if t.health_check_passed %}
+                                    <span class="badge badge-success">Passed</span>
+                                {% elif t.status == 'Rejected' %}
+                                    <span class="badge badge-danger">Failed</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <div class="my-4 text-muted">
+                                    <i class="fas fa-tint-slash fa-4x mb-4"></i>
+                                    <p class="h5">No blood donation records found</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchDonation');
+        searchInput.addEventListener('keyup', function() {
+            const input = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.table-donation tbody tr');
+            
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                const isVisible = Array.from(cells).some(cell => 
+                    cell.textContent.toLowerCase().includes(input)
+                );
+                row.style.display = isVisible ? '' : 'none';
+            });
+        });
+    });
+</script>
 
 {% endblock content %}

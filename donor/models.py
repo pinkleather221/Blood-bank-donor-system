@@ -24,8 +24,8 @@ class Donor(models.Model):
     def is_eligible_to_donate(self):
         if not self.last_donation_date:
             return True
-        three_months_ago = datetime.now().date() - timedelta(days=90)
-        return self.last_donation_date < three_months_ago and self.health_status == 'ELIGIBLE'
+        three_months_ago = timezone.now().date() - timedelta(days=90)
+        return self.last_donation_date.date() < three_months_ago and self.health_status == 'ELIGIBLE'
     @property
     def get_name(self):
         return self.user.first_name+" "+self.user.last_name

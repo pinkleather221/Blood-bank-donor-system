@@ -33,6 +33,8 @@ class EmailCampaign(models.Model):
     recipient_count = models.IntegerField(default=0)
     sent_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date_sent = models.DateTimeField(auto_now_add=True)
+    success_count = models.IntegerField(default=0)  # Add this
+    failed_count = models.IntegerField(default=0)   # And this
     
     def __str__(self):
         return self.subject       

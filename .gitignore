@@ -1,1 +1,26 @@
+# Python compiled files
 *.pyc
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyo
+*.pyd
+
+# Database files
+*.sqlite3
+
+# Log files
+*.log
+
+# Media files
+media/
+
+# Environment variables
+.env
+
+# macOS files
+.DS_Store
+
+# Egg files
+*.egg-info/
+*.egg

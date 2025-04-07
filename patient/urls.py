@@ -8,4 +8,6 @@ urlpatterns = [
     path('patient-dashboard', views.patient_dashboard_view,name='patient-dashboard'),
     path('make-request', views.make_request_view,name='make-request'),
     path('my-request', views.my_request_view,name='my-request'),
+    path('update-patient-notification-settings', views.update_patient_notification_settings, name='update-patient-notification-settings'),
+
 ]

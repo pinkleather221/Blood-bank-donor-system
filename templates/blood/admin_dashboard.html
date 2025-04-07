@@ -1,178 +1,276 @@
 {% extends 'blood/adminbase.html' %}
 {% block content %}
-<br><br>
-<div class="container">
-    <div class="row">
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-envelope mr-2"></i> Email Campaigns
-                </h5>
-                <p class="card-text">Send email notifications to donors and patients.</p>
-                <a href="{% url 'admin_emails' %}" class="btn btn-primary">Manage Emails</a>
+
+<div class="container py-5">
+    <!-- Blood Group Stock Section with Title -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-tint mr-2" style="color: #d41010;"></i> 
+                Blood Stock Inventory
+            </h3>
+            <hr class="my-4" style="background-color: #d41010; height: 2px; width: 100px; margin: 0 auto;">
+        </div>
+    </div>
+
+    <!-- Positive Blood Groups Row -->
+    <div class="row mb-4">
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">A+ <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{A1.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>                            
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">B+ <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{B1.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">O+ <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{O1.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">AB+ <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{AB1.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-3">
-          <div class="card bg-light">
-            <div class="card-body">
-                <div class="blood">
-                    <h2>A+ <i class="fas fa-tint" ></i></h2>
-                </div><br><br>
-                <div>
-                    {{A1.unit}}ml
-                </div>                            
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <h2>B+ <i class="fas fa-tint"></i></h2>
-                    </div><br><br>
-                    <div>
-                      {{B1.unit}}ml
-                    </div>                            
+    <!-- Negative Blood Groups Row -->
+    <div class="row mb-5">
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">A- <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{A2.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
                 </div>
-              </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <h2>O+ <i class="fas fa-tint"></i></h2>
-                    </div><br><br>
-                    <div>
-                      {{O1.unit}}ml
-                    </div>                            
-                </div>
-              </div>
-          </div>
-          <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <h2>AB+ <i class="fas fa-tint"></i></h2>
-                    </div><br><br>
-                    <div>
-                      {{AB1.unit}}ml
-                    </div>                            
-                </div>
-              </div>
-          </div>
-      </div>
-  
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="card bg-light">
-            <div class="card-body">
-                <div class="blood">
-                    <h2>A- <i class="fas fa-tint"></i></h2>
-                </div><br><br>
-                <div>
-                  {{A2.unit}}ml
-                </div>                            
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <h2>B- <i class="fas fa-tint"></i></h2>
-                    </div><br><br>
-                    <div>
-                      {{B2.unit}}ml
-                    </div>                            
-                </div>
-              </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <h2>O- <i class="fas fa-tint"></i></h2>
-                    </div><br><br>
-                    <div>
-                      {{O2.unit}}ml
-                    </div>                            
-                </div>
-              </div>
-          </div>
-          <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <h2>AB- <i class="fas fa-tint"></i></h2>
-                    </div><br><br>
-                    <div>
-                      {{AB2.unit}}ml
-                    </div>                            
-                </div>
-              </div>
-          </div>
-      </div>
-<hr>
-    <div class="row">
-      <div class="col-sm-3">
-        <div class="card bg-light">
-          <div class="card-body">
-              <div class="blood">
-                  <i class="fas fa-users" style="color: #1e88e5;"></i>
-              </div><br>
-              <div>
-                  Available Donors <br>
-                  {{totaldonors}}
-              </div>                            
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-3">
-          <div class="card bg-light">
-              <div class="card-body">
-                  <div class="blood">
-                      <i class="fas fa-spinner" style="color:#efb000;"></i>
-                  </div><br>
-                  <div>
-                      Total Requests <br>
-                     {{totalrequest}}
-                  </div>                            
-              </div>
-            </div>
-      </div>
-     
-        <div class="col-sm-3">
-          <div class="card bg-light">
-              <div class="card-body">
-                  <div class="blood">
-                      <i class="fas fa-tint xyz" style="color:#d41010;"></i>
-                  </div><br>
-                  <div>
-                      Total Blood Unit (ml) <br>
-                      {{totalbloodunit}}
-                  </div>                            
-              </div>
             </div>
         </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">B- <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{B2.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">O- <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{O2.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="blood-type mb-3">
+                        <h2 class="mb-0">AB- <i class="fas fa-tint" style="color: #d41010;"></i></h2>
+                    </div>
+                    <div class="blood-amount">
+                        <span class="display-5 font-weight-bold">{{AB2.unit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="col-sm-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <div class="blood">
-                        <i class="far fa-check-circle" style="color:green;"></i>
-                    </div><br>
-                    <div>
-                        Approved Requests <br>
-                        {{totalapprovedrequest}}
-                    </div>                            
+    <!-- Stats Section with Title -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-chart-bar mr-2" style="color: #1e88e5;"></i> 
+                Summary Statistics
+            </h3>
+            <hr class="my-4" style="background-color: #1e88e5; height: 2px; width: 100px; margin: 0 auto;">
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row mb-5">
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="stats-icon mb-3">
+                        <i class="fas fa-users fa-3x" style="color: #1e88e5;"></i>
+                    </div>
+                    <h5 class="stats-title">Available Donors</h5>
+                    <div class="stats-value">
+                        <span class="display-5 font-weight-bold">{{totaldonors}}</span>
+                    </div>
                 </div>
-              </div>
-          </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="stats-icon mb-3">
+                        <i class="fas fa-spinner fa-3x" style="color: #efb000;"></i>
+                    </div>
+                    <h5 class="stats-title">Total Requests</h5>
+                    <div class="stats-value">
+                        <span class="display-5 font-weight-bold">{{totalrequest}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="stats-icon mb-3">
+                        <i class="fas fa-tint fa-3x" style="color: #d41010;"></i>
+                    </div>
+                    <h5 class="stats-title">Total Blood Unit</h5>
+                    <div class="stats-value">
+                        <span class="display-5 font-weight-bold">{{totalbloodunit}}</span>
+                        <span class="text-muted ml-1">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <div class="card shadow-sm rounded-lg h-100 border-0 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="stats-icon mb-3">
+                        <i class="far fa-check-circle fa-3x" style="color: #28a745;"></i>
+                    </div>
+                    <h5 class="stats-title">Approved Requests</h5>
+                    <div class="stats-value">
+                        <span class="display-5 font-weight-bold">{{totalapprovedrequest}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Section with Title -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-cogs mr-2" style="color: #555;"></i> 
+                Admin Actions
+            </h3>
+            <hr class="my-4" style="background-color: #555; height: 2px; width: 100px; margin: 0 auto;">
+        </div>
+    </div>
+
+    <!-- Actions Row -->
+    <div class="row">
+        <div class="col-md-6 mx-auto mb-4">
+            <div class="card shadow border-0 rounded-lg hover-card" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+                <div class="card-body text-center p-5">
+                    <div class="action-icon mb-4">
+                        <i class="fas fa-envelope fa-4x text-primary"></i>
+                    </div>
+                    <h4 class="card-title font-weight-bold mb-3">Email Campaigns</h4>
+                    <p class="card-text text-muted mb-4">Send email notifications to donors and patients efficiently and effectively.</p>
+                    <a href="{% url 'admin_emails' %}" class="btn btn-primary btn-lg px-4 hover-btn">
+                        Manage Emails <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Custom CSS -->
+<style>
+    .hover-card {
+        transition: all 0.3s ease;
+        background-color: #ffffff;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .hover-btn {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-btn:hover {
+        transform: scale(1.05);
+    }
+    
+    .blood-type h2 {
+        font-size: 2.2rem;
+        font-weight: 600;
+    }
+    
+    .blood-amount .display-5,
+    .stats-value .display-5 {
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+    
+    .stats-title {
+        color: #555;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Custom responsive adjustments */
+    @media (max-width: 767.98px) {
+        .blood-type h2 {
+            font-size: 1.8rem;
+        }
+        
+        .blood-amount .display-5,
+        .stats-value .display-5 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
 
 {% endblock content %}
