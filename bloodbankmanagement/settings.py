@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'blood',
     'donor',
     'patient',
-    'django_celery_beat',
+    # 'django_celery_beat',
 ]
 
 MIDDLEWARE = [
