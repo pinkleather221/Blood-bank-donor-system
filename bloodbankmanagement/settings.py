@@ -10,18 +10,42 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+# import os
+# from pathlib import Path
+
+# # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
+# STATIC_DIR=os.path.join(BASE_DIR,'static')
+# MEDIA_ROOT=os.path.join(BASE_DIR,'static')
+# # settings.py
+# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# BASE_DIR = Path(__file__).resolve().parent.parent
+# MEDIA_URL = ''
+# MEDIA_ROOT = os.path.join(BASE_DIR, '')
+# STATIC_ROOT = Path(BASE_DIR / 'static')
+
+
+
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
-STATIC_DIR=os.path.join(BASE_DIR,'static')
-MEDIA_ROOT=os.path.join(BASE_DIR,'static')
-# settings.py
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_URL = ''
-MEDIA_ROOT = os.path.join(BASE_DIR, '')
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+# URL for static files (what you see in templates)
+STATIC_URL = '/static/'
+# Absolute path to the directory where collectstatic will gather static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Recommended to use 'staticfiles'
+
+# URL for media files (what you see in templates)
+MEDIA_URL = '/media/'
+# Absolute path to the directory where user-uploaded media files will be stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 # Quick-start development settings - unsuitable for production
